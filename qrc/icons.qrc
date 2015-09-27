@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/action-about-qt.png</file>
+        <file>icons/action-tomato-start-resting.png</file>
+        <file>icons/action-tomato-start-working.png</file>
+        <file>icons/action-tomato-stop.png</file>
+        <file>icons/action-tomato-pause.png</file>
+        <file>icons/action-tasktime-add.png</file>
+        <file>icons/action-tasktime-edit.png</file>
+        <file>icons/action-tasktime-remove.png</file>
+        <file>icons/action-tasktime-removeall.png</file>
+        <file>icons/taskview-task-active-and-started.png</file>
+        <file>icons/taskview-task-active.png</file>
+        <file>icons/taskview-task-inactive.png</file>
+        <file>icons/taskview-task-subtaskactive.png</file>
+    </qresource>
+</RCC>
