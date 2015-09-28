@@ -350,9 +350,11 @@ void MainWindow::on_settings_action_triggered()
     SettingsDialog dialog(this);
     dialog.setPlayWorkingFinishSound(settings.value(SettingPlayWorkingFinishSound, true).toBool());
     dialog.setPlayRestingFinishSound(settings.value(SettingPlayRestingFinishSound, true).toBool());
+    dialog.setSaveChangesOnExit(settings.value(SettingSaveChangesOnExit, true).toBool());
     if (dialog.exec() == QDialog::Accepted) {
         settings.setValue(SettingPlayWorkingFinishSound, dialog.playWorkingFinishSound());
         settings.setValue(SettingPlayRestingFinishSound, dialog.playRestingFinishSound());
+        settings.setValue(SettingSaveChangesOnExit, dialog.saveChangesOnExit());
     }
 }
 
@@ -390,7 +392,16 @@ void MainWindow::on_task_treeView_activated(const QModelIndex &index)
 
 void MainWindow::closeEvent(QCloseEvent *closeEvent)
 {
-    if (m_project->hasChanges()) {
+    G_SETTINGS_INIT();
+
+    if (m_project->hasChanges() && settings.value(SettingPlayWorkingFinishSound, true).toBool()) {
+        QString errorString;
+        if (!m_project->save(&errorString)) {
+            QMessageBox::warning(this, tr("Warning"), errorString);
+            closeEvent->ignore();
+            return;
+        }
+    } else if (m_project->hasChanges()) {
         int ret = QMessageBox::question(
                     this,
                     tr("Question"),

@@ -27,5 +27,6 @@ const char SettingLastPath[] = "LastPath";
 const char SettingLastProject[] = "LastProjectFileName";
 const char SettingPlayWorkingFinishSound[] = "PlayWorkingFinishSound";
 const char SettingPlayRestingFinishSound[] = "PlayRestingFinishSound";
+const char SettingSaveChangesOnExit[] = "SaveChangesOnExit";
 
 #endif // SETTINGS_H

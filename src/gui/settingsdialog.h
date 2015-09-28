@@ -37,6 +37,9 @@ public:
     bool playRestingFinishSound() const;
     void setPlayRestingFinishSound(bool state);
 
+    bool saveChangesOnExit() const;
+    void setSaveChangesOnExit(bool state);
+
 private:
     Ui::SettingsDialog *ui;
 };

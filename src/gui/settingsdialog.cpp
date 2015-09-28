@@ -47,3 +47,13 @@ void SettingsDialog::setPlayRestingFinishSound(bool state)
 {
     ui->playRestingSound_checkBox->setChecked(state);
 }
+
+bool SettingsDialog::saveChangesOnExit() const
+{
+    return ui->saveChangesOnExit_checkBox->isChecked();
+}
+
+void SettingsDialog::setSaveChangesOnExit(bool state)
+{
+    ui->saveChangesOnExit_checkBox->setChecked(state);
+}
