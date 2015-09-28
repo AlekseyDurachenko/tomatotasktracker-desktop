@@ -441,7 +441,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
         ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
-        ui->startTomato_action->setEnabled(true && m_tomato->activeTask());
+        ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(false);
         return;
     }
@@ -452,7 +452,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
         ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
-        ui->startTomato_action->setEnabled(true && m_tomato->activeTask());
+        ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(false);
         break;
     case Tomato::Working:
@@ -460,32 +460,32 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setToolTip(tr("Start resting"));
         ui->startTomato_action->setIconText(tr("Start resting"));
         ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartResting));
-        ui->startTomato_action->setEnabled(false);
-        ui->stopTomato_action->setEnabled(true && m_tomato->activeTask());
+        ui->startTomato_action->setEnabled(m_tomato->activeTask());
+        ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
     case Tomato::OverWorking:
         ui->startTomato_action->setText(tr("S&tart resting"));
         ui->startTomato_action->setToolTip(tr("Start resting"));
         ui->startTomato_action->setIconText(tr("Start resting"));
         ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartResting));
-        ui->startTomato_action->setEnabled(true && m_tomato->activeTask());
-        ui->stopTomato_action->setEnabled(true && m_tomato->activeTask());
+        ui->startTomato_action->setEnabled(m_tomato->activeTask());
+        ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
     case Tomato::Resting:
         ui->startTomato_action->setText(tr("S&tart working"));
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
         ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
-        ui->startTomato_action->setEnabled(false);
-        ui->stopTomato_action->setEnabled(true && m_tomato->activeTask());
+        ui->startTomato_action->setEnabled(m_tomato->activeTask());
+        ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
     case Tomato::OverResting:
         ui->startTomato_action->setText(tr("S&tart working"));
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
         ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
-        ui->startTomato_action->setEnabled(true && m_tomato->activeTask());
-        ui->stopTomato_action->setEnabled(true && m_tomato->activeTask());
+        ui->startTomato_action->setEnabled(m_tomato->activeTask());
+        ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
     }
 }
