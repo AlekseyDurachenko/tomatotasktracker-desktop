@@ -83,7 +83,7 @@ void TomatoWidget::updateTomatoStatus()
         break;
     };
 
-    qint64 time;
+    qint64 time = 0;
     switch (m_tomato->state()) {
     case Tomato::Idle:
         time = m_tomato->workingTime();
