@@ -38,7 +38,8 @@ public:
         IconTaskViewTaskActiveAndWorking,
         IconTaskViewTaskActive,
         IconTaskViewSubtaskActive,
-        IconTaskViewTaskInactive
+        IconTaskViewTaskInactive,
+        IconTaskViewTaskDone
     };
 
     static void init();

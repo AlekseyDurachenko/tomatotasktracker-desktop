@@ -18,6 +18,7 @@
 TaskData::TaskData()
 {
     m_timeLimit = 0;
+    m_isDone = false;
 }
 
 void TaskData::setTitle(const QString &title)
@@ -33,6 +34,11 @@ void TaskData::setDesc(const QString &desc)
 void TaskData::setTimeLimit(qint64 timeLimit)
 {
     m_timeLimit = timeLimit;
+}
+
+void TaskData::setDone(bool done)
+{
+    m_isDone = done;
 }
 
 void TaskData::setTimes(const QList<TaskTime> &times)

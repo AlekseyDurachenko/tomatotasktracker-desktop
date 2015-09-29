@@ -73,15 +73,18 @@ QVariant TaskItemModel::data(const QModelIndex &index, int role) const
         if (index.column() == 0) {
             if (isActiveTask) {
                 if (m_tomato->activeTask() == task) {
-                    if (m_tomato->state() == Tomato::Working || m_tomato->state() == Tomato::OverWorking) {
+                    if (m_tomato->state() == Tomato::Working
+                            || m_tomato->state() == Tomato::OverWorking)
                         return Theme::icon(Theme::IconTaskViewTaskActiveAndWorking);
-                    }
 
                     return Theme::icon(Theme::IconTaskViewTaskActive);
                 }
 
                 return Theme::icon(Theme::IconTaskViewSubtaskActive);
             }
+
+            if (task->data().isDone())
+                return Theme::icon(Theme::IconTaskViewTaskDone);
 
             return Theme::icon(Theme::IconTaskViewTaskInactive);
         }

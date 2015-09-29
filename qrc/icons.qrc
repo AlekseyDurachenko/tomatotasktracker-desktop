@@ -13,5 +13,6 @@
         <file>icons/taskview-task-active.png</file>
         <file>icons/taskview-task-inactive.png</file>
         <file>icons/taskview-task-subtaskactive.png</file>
+        <file>icons/taskview-task-done.png</file>
     </qresource>
 </RCC>

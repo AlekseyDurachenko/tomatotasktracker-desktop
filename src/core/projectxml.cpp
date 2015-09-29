@@ -32,6 +32,7 @@ const char *attrEndTime     = "endtime";
 const char *attrTitle       = "title";
 const char *attrDesc        = "desc";
 const char *attrTimeLimit   = "timelimit";
+const char *attrIsDone      = "isdone";
 
 
 static QDomElement createSettingsElem(QDomDocument doc, const Tomato *tomato)
@@ -49,6 +50,7 @@ static QDomElement createTaskElem(QDomDocument doc, const Tomato *tomato, const 
     elem.setAttribute(attrTitle, task->data().title());
     elem.setAttribute(attrDesc, task->data().desc());
     elem.setAttribute(attrTimeLimit, task->data().timeLimit());
+    elem.setAttribute(attrIsDone, task->data().isDone());
 
     foreach (const TaskTime & taskTime, task->data().times()) {
         QDomElement taskTimeElem = doc.createElement(nsTaskTime);
@@ -111,6 +113,7 @@ static TaskData taskDataFromElem(const QDomElement &taskElem)
     taskData.setTitle(taskElem.attribute(attrTitle, ""));
     taskData.setDesc(taskElem.attribute(attrDesc, ""));
     taskData.setTimeLimit(taskElem.attribute(attrTimeLimit, 0).toLongLong());
+    taskData.setDone(taskElem.attribute(attrIsDone, 0).toInt());
     taskData.setTimes(taskTimesFromElem(taskElem));
 
     return taskData;

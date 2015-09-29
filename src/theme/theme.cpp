@@ -39,6 +39,7 @@ void Theme::init()
     m_icons.insert(IconTaskViewTaskActive,              QIcon(":/icons/taskview-task-active.png"));
     m_icons.insert(IconTaskViewTaskInactive,            QIcon(":/icons/taskview-task-inactive.png"));
     m_icons.insert(IconTaskViewSubtaskActive,           QIcon(":/icons/taskview-task-subtaskactive.png"));
+    m_icons.insert(IconTaskViewTaskDone,                QIcon(":/icons/taskview-task-done.png"));
 }
 
 const QIcon Theme::icon(Icon name, const QIcon &defaultIcon)

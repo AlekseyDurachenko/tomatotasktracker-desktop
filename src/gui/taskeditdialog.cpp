@@ -53,6 +53,7 @@ TaskData TaskEditDialog::data() const
     } else {
         data.setTimeLimit(0);
     }
+    data.setDone(ui->done_checkBox->isChecked());
 
     QList<TaskTime> taskTimeList;
     for (int i = 0; i < ui->taskTime_treeWidget->topLevelItemCount(); ++i) {
@@ -77,6 +78,7 @@ void TaskEditDialog::setData(const TaskData &taskData)
         ui->min_spinBox->setValue((taskData.timeLimit() % 3600) / 60);
         ui->sec_spinBox->setValue(taskData.timeLimit() % 60);
     }
+    ui->done_checkBox->setChecked(taskData.isDone());
 
     foreach (const TaskTime &taskTime, taskData.times()) {
         QTreeWidgetItem *item = new QTreeWidgetItem;
