@@ -15,10 +15,14 @@
 #include "task.h"
 
 
+static int m_uniqueCounter = 1;
+
+
 Task::Task(const TaskData &data, Task *parent)
 {
     m_data = data;
     m_parent = parent;
+    m_id = ++m_uniqueCounter;
 
     calcTaskTime();
     calcTotalSubTasksTime();

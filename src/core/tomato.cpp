@@ -18,9 +18,20 @@
 #include <QDebug>
 
 
+static QList<Task *> findTaskRecursive(Task *root)
+{
+    QList<Task *> result = QList<Task *>() << root;
+    for (int i = 0; i < root->childCount(); ++i)
+        result << findTaskRecursive(root->child(i));
+
+    return result;
+}
+
+
 Tomato::Tomato(QObject *parent) : QObject(parent)
 {
     m_rootTask = new Task(TaskData(), 0);
+    m_taskHash.insert(m_rootTask->id(), m_rootTask);
     m_activeTask = 0;
 
     m_state = Idle;
@@ -169,6 +180,7 @@ Task *Tomato::addChildTask(Task *parent, const TaskData &data)
     emit aboutToBeTaskInserted(parent, index, index);
 
     Task *task = parent->addChild(data);
+    m_taskHash.insert(task->id(), task);
 
     emit taskInserted(parent, index, index);
     cascadeEmitTaskDataChanged(parent);
@@ -186,6 +198,8 @@ void Tomato::removeChildTask(Task *parent, int index)
     cascadeEmitAboutToBeTaskDataChanged(parent);
     emit aboutToBeTaskRemoved(parent, index, index);
 
+    foreach (Task *task, findTaskRecursive(parent->child(index)))
+        m_taskHash.remove(task->id());
     parent->removeChild(index);
 
     emit taskRemoved(parent, index, index);
@@ -245,10 +259,54 @@ void Tomato::removeAllTasks()
     cascadeEmitAboutToBeTaskDataChanged(rootTask());
     emit aboutToBeTaskRemoved(rootTask(), first, last);
 
+    foreach (Task *task, findTaskRecursive(rootTask()))
+        m_taskHash.remove(task->id());
+
     rootTask()->removeAllChildren();
 
     emit taskRemoved(rootTask(), first, last);
     cascadeEmitTaskDataChanged(rootTask());
+}
+
+void Tomato::moveTask(Task *task, Task *destParent, int destIndex)
+{
+    if (!taskCanBeMoved(task, destParent))
+        return;
+
+    int index = task->index();
+    emit aboutToBeTaskMoved(task->parent(), index, index, destParent, destIndex);
+
+    Task *srcParent = task->parent();
+    srcParent->m_children.removeAt(index);
+    destParent->m_children.insert(destIndex, task);
+    task->m_parent = destParent;
+
+    srcParent->calcTaskTime();
+    srcParent->calcTotalSubTasksTime();
+    srcParent->calcTotalTaskTime();
+    srcParent->cascadeParentSubtasksTimeUpdate();
+    destParent->calcTaskTime();
+    destParent->calcTotalSubTasksTime();
+    destParent->calcTotalTaskTime();
+    destParent->cascadeParentSubtasksTimeUpdate();
+
+    emit taskMoved(srcParent, index, index, destParent, destIndex);
+}
+
+bool Tomato::taskCanBeMoved(Task *task, Task *destParent)
+{
+    if (!task->parent())
+        return false;
+
+    if (findTaskRecursive(task).contains(destParent))
+        return false;
+
+    return true;
+}
+
+Task *Tomato::findTask(int id) const
+{
+    return m_taskHash.value(id, 0);
 }
 
 void Tomato::reset()

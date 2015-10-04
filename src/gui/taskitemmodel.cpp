@@ -32,12 +32,16 @@ TaskItemModel::TaskItemModel(Tomato *tomato, QObject *parent) :
             this, SLOT(tomato_aboutToBeTaskRemoved(Task*,int,int)));
     connect(m_tomato, SIGNAL(taskRemoved(Task*,int,int)),
             this, SLOT(tomato_taskRemoved(Task*,int,int)));
+    connect(m_tomato, SIGNAL(aboutToBeTaskMoved(Task*,int,int,Task*,int)),
+            this, SLOT(tomato_aboutToBeTaskMoved(Task*,int,int,Task*,int)));
+    connect(m_tomato, SIGNAL(taskMoved(Task*,int,int,Task*,int)),
+            this, SLOT(tomato_taskMoved(Task*,int,int,Task*,int)));
     connect(m_tomato, SIGNAL(aboutToBeTaskDataChanged(Task*,int,int)),
             this, SLOT(tomato_aboutToBeTaskDataChanged(Task*,int,int)));
     connect(m_tomato, SIGNAL(taskDataChanged(Task*,int,int)),
             this, SLOT(tomato_taskDataChanged(Task*,int,int)));
     connect(m_tomato, SIGNAL(aboutToBeTaskDisplayChanged(Task*,int,int)),
-            this, SLOT(tomato_aboutToBeTaskDataChanged(Task*,int,int)));
+            this, SLOT(tomato_aboutToBeTaskDataChanged(Task*,int,int)));    
     connect(m_tomato, SIGNAL(taskDisplayChanged(Task*,int,int)),
             this, SLOT(tomato_taskDataChanged(Task*,int,int)));
     connect(m_tomato, SIGNAL(aboutToBeReseted()),
@@ -217,6 +221,26 @@ void TaskItemModel::tomato_taskDataChanged(Task *parent, int first, int last)
     Task *lastTask = parent->child(last);
     emit dataChanged(createIndex(firstTask->index(), 0, firstTask),
                      createIndex(lastTask->index(),  columnCount() - 1, lastTask));
+}
+
+void TaskItemModel::tomato_aboutToBeTaskMoved(Task *srcParent,
+        int srcFirst, int srcLast,
+        Task *dstParent, int dstIndex)
+{
+    QModelIndex si = QModelIndex();
+    QModelIndex di = QModelIndex();
+    if (srcParent != m_tomato->rootTask())
+        si = createIndex(srcParent->index(), 0, srcParent);
+    if (dstParent != m_tomato->rootTask())
+        di = createIndex(dstParent->index(), columnCount(), dstParent);
+    beginMoveRows(si, srcFirst, srcLast, di, dstIndex);
+}
+
+void TaskItemModel::tomato_taskMoved(Task */*srcParent*/,
+        int /*srcFirst*/, int /*srcLast*/,
+        Task */*dstParent*/, int /*dstIndex*/)
+{
+    endMoveRows();
 }
 
 void TaskItemModel::tomato_aboutToBeReseted()

@@ -61,6 +61,10 @@ public:
     void removeTasks(const QList<Task *> tasks);
     void removeAllTasks();
 
+    void moveTask(Task *task, Task *destParent, int destIndex);
+    bool taskCanBeMoved(Task *task, Task *destParent);
+
+    Task *findTask(int id) const;
 signals:
     void stateChanged(Tomato::State state);
 
@@ -76,6 +80,10 @@ signals:
     void taskDataChanged(Task *parent, int first, int last);
     void aboutToBeTaskDisplayChanged(Task *parent, int first, int last);
     void taskDisplayChanged(Task *parent, int first, int last);
+    void aboutToBeTaskMoved(Task *sourceParent, int sourceFirst, int sourceLast,
+                            Task *destinationParent, int destinationIndex);
+    void taskMoved(Task *sourceParent, int sourceFirst, int sourceLast,
+                   Task *destinationParent, int destinationIndex);
 
     void aboutToBeReseted();
     void reseted();
@@ -115,6 +123,8 @@ private:
     qint64 m_restingTime;
 
     QTimer m_tomatoTimer;
+
+    QHash<int, Task *> m_taskHash;
 };
 
 qint64 Tomato::workingTime() const

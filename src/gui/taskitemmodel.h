@@ -43,6 +43,10 @@ private slots:
     void tomato_taskRemoved(Task *parent, int first, int last);
     void tomato_aboutToBeTaskDataChanged(Task *parent, int first, int last);
     void tomato_taskDataChanged(Task *parent, int first, int last);
+    void tomato_aboutToBeTaskMoved(Task *sourceParent, int sourceFirst, int sourceLast,
+                                   Task *destinationParent, int destinationIndex);
+    void tomato_taskMoved(Task *sourceParent, int sourceFirst, int sourceLast,
+                          Task *destinationParent, int destinationIndex);
     void tomato_aboutToBeReseted();
     void tomato_reseted();
 private:

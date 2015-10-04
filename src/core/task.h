@@ -28,7 +28,7 @@ private:
     Task(const TaskData &data, Task *parent = 0);
     ~Task();
 public:
-
+    inline int id() const;
     inline Task *parent() const;
 
     inline const TaskData &data() const;
@@ -63,6 +63,7 @@ public:
 
 private:
     Task *m_parent;
+    int m_id;
 
     TaskData m_data;
     QList<Task *> m_children;
@@ -71,6 +72,11 @@ private:
     qint64 m_totalSubtasksTime;
     qint64 m_taskTime;
 };
+
+int Task::id() const
+{
+    return m_id;
+}
 
 Task *Task::parent() const
 {
