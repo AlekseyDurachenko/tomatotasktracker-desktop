@@ -15,7 +15,6 @@
 #include "tomato.h"
 #include "consts.h"
 #include <QDateTime>
-#include <QDebug>
 
 
 static QList<Task *> findTaskRecursive(Task *root)
@@ -270,8 +269,14 @@ void Tomato::removeAllTasks()
 
 void Tomato::moveTask(Task *task, Task *destParent, int destIndex)
 {
+    if (destIndex == -1 && task->parent() == destParent)
+        return;
+
     if (!taskCanBeMoved(task, destParent))
         return;
+
+    if (destIndex == -1)
+        destIndex = destParent->childCount();
 
     int index = task->index();
     emit aboutToBeTaskMoved(task->parent(), index, index, destParent, destIndex);

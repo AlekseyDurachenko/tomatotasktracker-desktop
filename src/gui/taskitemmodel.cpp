@@ -16,8 +16,10 @@
 #include "theme.h"
 #include "utils.h"
 #include <QDateTime>
+#include <QDebug>
 #include <QFont>
 #include <QIcon>
+#include <QMimeData>
 
 
 TaskItemModel::TaskItemModel(Tomato *tomato, QObject *parent) :
@@ -47,6 +49,7 @@ TaskItemModel::TaskItemModel(Tomato *tomato, QObject *parent) :
     connect(m_tomato, SIGNAL(aboutToBeReseted()),
             this, SLOT(tomato_aboutToBeReseted()));
     connect(m_tomato, SIGNAL(reseted()), this, SLOT(tomato_reseted()));
+
 }
 
 QVariant TaskItemModel::data(const QModelIndex &index, int role) const
@@ -117,9 +120,13 @@ QVariant TaskItemModel::data(const QModelIndex &index, int role) const
 Qt::ItemFlags TaskItemModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::ItemIsDragEnabled
+                | Qt::ItemIsDropEnabled;
 
-    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    return Qt::ItemIsEnabled
+            | Qt::ItemIsSelectable
+            | Qt::ItemIsDragEnabled
+            | Qt::ItemIsDropEnabled;
 }
 
 QVariant TaskItemModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -185,6 +192,64 @@ int TaskItemModel::columnCount(const QModelIndex &/*parent*/) const
     return 2;
 }
 
+QStringList TaskItemModel::mimeTypes() const
+{
+    return QStringList() << "tomatotasktracker-desktop/task-ids";
+}
+
+QMimeData *TaskItemModel::mimeData(const QModelIndexList &indexes) const
+{
+    QList<int> ids;
+    foreach (const QModelIndex &index, indexes)
+    {
+        if (!index.isValid())
+            continue;
+
+        if (index.column() != 0)
+            continue;
+
+        Task *task = static_cast<Task *>(index.internalPointer());
+        if (!task)
+            continue;
+
+        ids.append(task->id());
+    }
+
+    if (ids.isEmpty())
+        return 0;
+
+    QByteArray encodedData;
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+    stream << ids;
+
+    QMimeData *mimeData = new QMimeData();
+    mimeData->setData("tomatotasktracker-desktop/task-ids", encodedData);
+    return mimeData;
+}
+
+bool TaskItemModel::dropMimeData(const QMimeData *data, Qt::DropAction /*action*/,
+                                 int row, int /*column*/, const QModelIndex &parent)
+{
+    Task *parentItem = static_cast<Task *>(parent.internalPointer());
+    if (!parentItem)
+        parentItem = m_tomato->rootTask();
+
+    if (data->hasFormat("tomatotasktracker-desktop/task-ids")) {
+        QByteArray encodedData = data->data("tomatotasktracker-desktop/task-ids");
+        QDataStream stream(&encodedData, QIODevice::ReadOnly);
+        QList<int> ids;
+        stream >> ids;
+
+        foreach (int id, ids) {
+            m_tomato->moveTask(m_tomato->findTask(id), parentItem, row);
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 void TaskItemModel::tomato_aboutToBeTaskInserted(Task *parent, int first, int last)
 {
     if (parent == m_tomato->rootTask())
@@ -232,7 +297,7 @@ void TaskItemModel::tomato_aboutToBeTaskMoved(Task *srcParent,
     if (srcParent != m_tomato->rootTask())
         si = createIndex(srcParent->index(), 0, srcParent);
     if (dstParent != m_tomato->rootTask())
-        di = createIndex(dstParent->index(), columnCount(), dstParent);
+        di = createIndex(dstParent->index(), 0, dstParent);
     beginMoveRows(si, srcFirst, srcLast, di, dstIndex);
 }
 
