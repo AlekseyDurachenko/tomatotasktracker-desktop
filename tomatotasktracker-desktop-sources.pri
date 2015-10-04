@@ -25,7 +25,8 @@ HEADERS        +=                                                       \
     $$PWD/src/core/projectxml.h \
     $$PWD/src/core/tomato.h \
     $$PWD/src/gui/propertiesdialog.h \
-    $$PWD/src/gui/settingsdialog.h
+    $$PWD/src/gui/settingsdialog.h \
+    $$PWD/src/gui/taskfilterproxymodel.h
 
 SOURCES        +=                                                       \
     $$PWD/src/version.cpp                                               \
@@ -45,7 +46,8 @@ SOURCES        +=                                                       \
     $$PWD/src/core/projectxml.cpp \
     $$PWD/src/core/tomato.cpp \
     $$PWD/src/gui/propertiesdialog.cpp \
-    $$PWD/src/gui/settingsdialog.cpp
+    $$PWD/src/gui/settingsdialog.cpp \
+    $$PWD/src/gui/taskfilterproxymodel.cpp
 
 
 FORMS          +=                                                       \

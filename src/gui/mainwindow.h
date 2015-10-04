@@ -19,6 +19,7 @@
 #include "project.h"
 #include "taskitemmodel.h"
 #include <QMainWindow>
+class TaskFilterProxyModel;
 
 
 namespace Ui {
@@ -49,6 +50,7 @@ private slots:
     void on_editTask_action_triggered();
     void on_removeTask_action_triggered();
     void on_removeAllTasks_action_triggered();
+    void on_hideFinishedTasks_action_toggled(bool hide);
     void on_expandAllTasks_action_triggered();
     void on_collapseAllTasks_action_triggered();
 
@@ -68,8 +70,10 @@ private slots:
     void updateTomatoActions();
     void updateTaskActions();
     void playSound(Tomato::State state);
+
 private:
     Ui::MainWindow *ui;
+    TaskFilterProxyModel *m_taskFilterProxyModel;
     QTimer *m_tomatoTimer;
     Project *m_project;
     Tomato *m_tomato;

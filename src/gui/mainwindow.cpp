@@ -23,6 +23,7 @@
 #include "settings.h"
 #include "propertiesdialog.h"
 #include "settingsdialog.h"
+#include "taskfilterproxymodel.h"
 #include <QSettings>
 #include <QFileDialog>
 #include <QDebug>
@@ -50,7 +51,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_project, SIGNAL(changed()),
             this, SLOT(updateProjectActions()));
 
-    ui->task_treeView->setModel(new TaskItemModel(m_tomato, this));
+    TaskItemModel *taskItemModel = new TaskItemModel(m_tomato, this);
+    m_taskFilterProxyModel = new TaskFilterProxyModel(m_tomato, this);
+    m_taskFilterProxyModel->setSourceModel(taskItemModel);
+    m_taskFilterProxyModel->setEnabled(false);
+    m_taskFilterProxyModel->setDynamicSortFilter(true);
+    //ui->task_treeView->setModel(new TaskItemModel(m_tomato, this));
+    ui->task_treeView->setModel(m_taskFilterProxyModel);
     connect(ui->task_treeView->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
             this, SLOT(updateTaskActions()));
@@ -81,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent) :
     restoreGeometry(settings.value(SettingsMainWindowGeometry, saveGeometry()).toByteArray());
     restoreState(settings.value(SettingsMainWindowState, saveState()).toByteArray());
     ui->task_treeView->header()->restoreState(settings.value(SettingsTaskViewHeaderState, ui->task_treeView->header()->saveState()).toByteArray());
+    ui->hideFinishedTasks_action->setChecked(settings.value(SettingsHideFinishedTasks, ui->hideFinishedTasks_action->isChecked()).toBool());
 
     updateWindowTitle();
     updateProjectActions();
@@ -95,6 +103,7 @@ MainWindow::~MainWindow()
     settings.setValue(SettingsMainWindowGeometry, saveGeometry());
     settings.setValue(SettingsMainWindowState, saveState());
     settings.setValue(SettingsTaskViewHeaderState, ui->task_treeView->header()->saveState());
+    settings.setValue(SettingsHideFinishedTasks, ui->hideFinishedTasks_action->isChecked());
 
     delete ui;
 }
@@ -322,6 +331,11 @@ void MainWindow::on_removeAllTasks_action_triggered()
     m_tomato->removeAllTasks();
 
     updateTaskActions();
+}
+
+void MainWindow::on_hideFinishedTasks_action_toggled(bool hide)
+{
+    m_taskFilterProxyModel->setEnabled(hide);
 }
 
 void MainWindow::on_editTask_action_triggered()

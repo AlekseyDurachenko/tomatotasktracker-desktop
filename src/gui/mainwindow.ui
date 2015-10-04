@@ -100,6 +100,8 @@
     <addaction name="removeTask_action"/>
     <addaction name="removeAllTasks_action"/>
     <addaction name="separator"/>
+    <addaction name="hideFinishedTasks_action"/>
+    <addaction name="separator"/>
     <addaction name="expandAllTasks_action"/>
     <addaction name="collapseAllTasks_action"/>
    </widget>
@@ -250,6 +252,14 @@
    </property>
    <property name="toolTip">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="hideFinishedTasks_action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Hide finished tasks</string>
    </property>
   </action>
  </widget>

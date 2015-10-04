@@ -31,6 +31,7 @@ const char SettingsSaveChangesOnExit[] = "SaveChangesOnExit";
 const char SettingsMainWindowGeometry[] = "MainWindow/geometry";
 const char SettingsMainWindowState[] = "MainWindow/state";
 const char SettingsTaskViewHeaderState[] = "TaskView/header/state";
+const char SettingsHideFinishedTasks[] = "HideFinishedTasks";
 
 
 #endif // SETTINGS_H
