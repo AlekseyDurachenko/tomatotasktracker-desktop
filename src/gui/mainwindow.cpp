@@ -78,6 +78,10 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
+    restoreGeometry(settings.value(SettingMainWindowGeometry, saveGeometry()).toByteArray());
+    restoreState(settings.value(SettingMainWindowState, saveState()).toByteArray());
+    ui->task_treeView->header()->restoreState(settings.value(SettingTaskViewHeaderState, ui->task_treeView->header()->saveState()).toByteArray());
+
     updateWindowTitle();
     updateProjectActions();
     updateTomatoActions();
@@ -88,6 +92,9 @@ MainWindow::~MainWindow()
 {
     G_SETTINGS_INIT();
     settings.setValue(SettingLastProject, m_project->fileName());
+    settings.setValue(SettingMainWindowGeometry, saveGeometry());
+    settings.setValue(SettingMainWindowState, saveState());
+    settings.setValue(SettingTaskViewHeaderState, ui->task_treeView->header()->saveState());
 
     delete ui;
 }

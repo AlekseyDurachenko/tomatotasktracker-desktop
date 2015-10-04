@@ -28,5 +28,9 @@ const char SettingLastProject[] = "LastProjectFileName";
 const char SettingPlayWorkingFinishSound[] = "PlayWorkingFinishSound";
 const char SettingPlayRestingFinishSound[] = "PlayRestingFinishSound";
 const char SettingSaveChangesOnExit[] = "SaveChangesOnExit";
+const char SettingMainWindowGeometry[] = "MainWindow/geometry";
+const char SettingMainWindowState[] = "MainWindow/state";
+const char SettingTaskViewHeaderState[] = "TaskView/header/state";
+
 
 #endif // SETTINGS_H
