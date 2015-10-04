@@ -86,6 +86,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_trayIcon = new QSystemTrayIcon(this);
     connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(trayIcon_activated(QSystemTrayIcon::ActivationReason)));
+    connect(m_trayIcon, SIGNAL(messageClicked()),
+            this, SLOT(show()));
     m_trayIcon->setIcon(Theme::icon(Theme::IconApp));
     m_trayIcon->setVisible(true);
     m_trayIconMenu = new QMenu(this);
@@ -437,10 +439,14 @@ void MainWindow::on_settings_action_triggered()
     SettingsDialog dialog(this);
     dialog.setPlayWorkingFinishSound(settings.value(SettingsPlayWorkingFinishSound, true).toBool());
     dialog.setPlayRestingFinishSound(settings.value(SettingsPlayRestingFinishSound, true).toBool());
+    dialog.setShowWorkingFinishedTrayNotify(settings.value(SettingsShowWorkingFinishTrayNotify, true).toBool());
+    dialog.setShowRestingFinishedTrayNotify(settings.value(SettingsShowRestingFinishTrayNotify, true).toBool());
     dialog.setSaveChangesOnExit(settings.value(SettingsSaveChangesOnExit, true).toBool());
     if (dialog.exec() == QDialog::Accepted) {
         settings.setValue(SettingsPlayWorkingFinishSound, dialog.playWorkingFinishSound());
         settings.setValue(SettingsPlayRestingFinishSound, dialog.playRestingFinishSound());
+        settings.setValue(SettingsShowWorkingFinishTrayNotify, dialog.showWorkingFinishedTrayNotify());
+        settings.setValue(SettingsShowRestingFinishTrayNotify, dialog.showRestingFinishedTrayNotify());
         settings.setValue(SettingsSaveChangesOnExit, dialog.saveChangesOnExit());
     }
 }
@@ -673,6 +679,9 @@ void MainWindow::playSound(Tomato::State state)
     bool playWorkingSound = settings.value(SettingsPlayWorkingFinishSound, true).toBool();
     bool playRestingSound = settings.value(SettingsPlayRestingFinishSound, true).toBool();
 
+    bool showWorkingTrayNotify = settings.value(SettingsShowWorkingFinishTrayNotify, true).toBool();
+    bool showRestingTrayNotify = settings.value(SettingsShowRestingFinishTrayNotify, true).toBool();
+
     if ((playWorkingSound && state == Tomato::OverWorking)
             || (playRestingSound && state == Tomato::OverResting)) {
         Phonon::MediaObject  *music = Phonon::createPlayer(
@@ -680,5 +689,13 @@ void MainWindow::playSound(Tomato::State state)
                     Phonon::MediaSource(":/sound/sound.wav"));
         music->play();
         connect(music, SIGNAL(finished()), music, SLOT(deleteLater()));
+    }
+
+    if (showWorkingTrayNotify && state == Tomato::OverWorking) {
+        m_trayIcon->showMessage(tr("Tomato task tracker"), tr("Time for working is over"), QSystemTrayIcon::Information);
+    }
+
+    if (showRestingTrayNotify && state == Tomato::OverResting) {
+        m_trayIcon->showMessage(tr("Tomato task tracker"), tr("Time for resting is over"), QSystemTrayIcon::Information);
     }
 }

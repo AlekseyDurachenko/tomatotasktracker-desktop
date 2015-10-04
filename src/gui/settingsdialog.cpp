@@ -48,6 +48,26 @@ void SettingsDialog::setPlayRestingFinishSound(bool state)
     ui->playRestingSound_checkBox->setChecked(state);
 }
 
+bool SettingsDialog::showWorkingFinishedTrayNotify() const
+{
+    return ui->showWorkingTrayNotify_checkBox->isChecked();
+}
+
+void SettingsDialog::setShowWorkingFinishedTrayNotify(bool state)
+{
+    ui->showWorkingTrayNotify_checkBox->setChecked(state);
+}
+
+bool SettingsDialog::showRestingFinishedTrayNotify() const
+{
+    return ui->showRestingTrayNotify_checkBox->isChecked();
+}
+
+void SettingsDialog::setShowRestingFinishedTrayNotify(bool state)
+{
+    ui->showRestingTrayNotify_checkBox->setChecked(state);
+}
+
 bool SettingsDialog::saveChangesOnExit() const
 {
     return ui->saveChangesOnExit_checkBox->isChecked();

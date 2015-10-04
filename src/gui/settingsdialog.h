@@ -37,6 +37,12 @@ public:
     bool playRestingFinishSound() const;
     void setPlayRestingFinishSound(bool state);
 
+    bool showWorkingFinishedTrayNotify() const;
+    void setShowWorkingFinishedTrayNotify(bool state);
+
+    bool showRestingFinishedTrayNotify() const;
+    void setShowRestingFinishedTrayNotify(bool state);
+
     bool saveChangesOnExit() const;
     void setSaveChangesOnExit(bool state);
 
