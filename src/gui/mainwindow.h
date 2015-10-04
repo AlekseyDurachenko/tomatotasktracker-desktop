@@ -19,6 +19,7 @@
 #include "project.h"
 #include "taskitemmodel.h"
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 class TaskFilterProxyModel;
 
 
@@ -62,13 +63,18 @@ private slots:
     void on_task_treeView_customContextMenuRequested(const QPoint &pos);
     void on_task_treeView_activated(const QModelIndex &index);
 
+    void trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+
 protected:
     void closeEvent(QCloseEvent *closeEvent);
+
 private slots:
     void updateWindowTitle();
     void updateProjectActions();
     void updateTomatoActions();
     void updateTaskActions();
+    void updateTrayIcon();
+    void updateTrayStatusText();
     void playSound(Tomato::State state);
 
 private:
@@ -77,6 +83,10 @@ private:
     QTimer *m_tomatoTimer;
     Project *m_project;
     Tomato *m_tomato;
+
+    QSystemTrayIcon *m_trayIcon;
+    QMenu *m_trayIconMenu;
+    QAction *m_trayStatusAction;
 };
 
 

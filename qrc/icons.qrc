@@ -14,5 +14,6 @@
         <file>icons/taskview-task-inactive.png</file>
         <file>icons/taskview-task-subtaskactive.png</file>
         <file>icons/taskview-task-done.png</file>
+        <file>icons/tomatotasktracker-desktop.png</file>
     </qresource>
 </RCC>

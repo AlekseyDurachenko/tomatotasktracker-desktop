@@ -21,7 +21,9 @@ QImage Theme::m_appIconImage;
 
 void Theme::init()
 {
-    m_appIconImage = QImage(":/icons/taskview-task-active-and-started.png");
+    m_appIconImage = QImage(":/icons/tomatotasktracker-desktop.png");
+
+    m_icons.insert(IconApp, QIcon(":/icons/tomatotasktracker-desktop.png"));
 
     m_icons.insert(IconActionTomatoStartWorking,    QIcon(":/icons/action-tomato-start-working.png"));
     m_icons.insert(IconActionTomatoStartResting,    QIcon(":/icons/action-tomato-start-resting.png"));

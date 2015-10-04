@@ -24,6 +24,7 @@
 #include "propertiesdialog.h"
 #include "settingsdialog.h"
 #include "taskfilterproxymodel.h"
+#include "utils.h"
 #include <QSettings>
 #include <QFileDialog>
 #include <QDebug>
@@ -40,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_tomato = new Tomato(this);
     connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
             this, SLOT(updateTomatoActions()));
+    connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
+            this, SLOT(updateTrayIcon()));
     connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
             this, SLOT(playSound(Tomato::State)));
     connect(m_tomato, SIGNAL(activeTaskChanged()),
@@ -72,9 +75,28 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_tomatoTimer, SIGNAL(timeout()),
             m_tomato, SLOT(updateActiveTaskDisplay()));
     connect(m_tomatoTimer, SIGNAL(timeout()),
-            ui->tomato_widget, SLOT(updateTomatoStatus()));
-
+            ui->tomato_widget, SLOT(updateTomatoStatus()));    
+    connect(m_tomatoTimer, SIGNAL(timeout()),
+            this, SLOT(updateTrayStatusText()));
     ui->stopTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStop));
+
+    m_trayStatusAction = new QAction(this);
+    m_trayStatusAction->setEnabled(false);
+
+    m_trayIcon = new QSystemTrayIcon(this);
+    connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(trayIcon_activated(QSystemTrayIcon::ActivationReason)));
+    m_trayIcon->setIcon(Theme::icon(Theme::IconApp));
+    m_trayIcon->setVisible(true);
+    m_trayIconMenu = new QMenu(this);
+    m_trayIconMenu->addAction(m_trayStatusAction);
+    m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(ui->startTomato_action);
+    m_trayIconMenu->addAction(ui->stopTomato_action);
+    m_trayIconMenu->addSeparator();
+    m_trayIconMenu->addAction(ui->quit_action);
+    m_trayIcon->setContextMenu(m_trayIconMenu);
+
 
     G_SETTINGS_INIT();
     QString projectFileName = settings.value(SettingsLastProject, "").toString();
@@ -94,11 +116,21 @@ MainWindow::MainWindow(QWidget *parent) :
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
+    updateTrayIcon();
 }
 
 MainWindow::~MainWindow()
 {
     G_SETTINGS_INIT();
+
+    if (m_project->hasChanges()
+            && settings.value(SettingsPlayWorkingFinishSound, true).toBool()) {
+        QString errorString;
+        if (!m_project->save(&errorString)) {
+            QMessageBox::warning(this, tr("Warning"), errorString);
+        }
+    }
+
     settings.setValue(SettingsLastProject, m_project->fileName());
     settings.setValue(SettingsMainWindowGeometry, saveGeometry());
     settings.setValue(SettingsMainWindowState, saveState());
@@ -137,6 +169,7 @@ void MainWindow::on_new_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
+    updateTrayIcon();
 }
 
 void MainWindow::on_open_action_triggered()
@@ -163,6 +196,7 @@ void MainWindow::on_open_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
+    updateTrayIcon();
 }
 
 void MainWindow::on_save_action_triggered()
@@ -176,6 +210,7 @@ void MainWindow::on_save_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
+    updateTrayIcon();
 }
 
 void MainWindow::on_saveAs_action_triggered()
@@ -207,6 +242,7 @@ void MainWindow::on_saveAs_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
+    updateTrayIcon();
 }
 
 void MainWindow::on_close_action_triggered()
@@ -237,6 +273,7 @@ void MainWindow::on_close_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
+    updateTrayIcon();
 }
 
 void MainWindow::on_properties_action_triggered()
@@ -252,7 +289,36 @@ void MainWindow::on_properties_action_triggered()
 
 void MainWindow::on_quit_action_triggered()
 {
-    close();
+    G_SETTINGS_INIT();
+
+    if (m_project->hasChanges() && settings.value(SettingsPlayWorkingFinishSound, true).toBool()) {
+        QString errorString;
+        if (!m_project->save(&errorString)) {
+            QMessageBox::warning(this, tr("Warning"), errorString);
+            return;
+        }
+    } else if (m_project->hasChanges()) {
+        int ret = QMessageBox::question(
+                    this,
+                    tr("Question"),
+                    tr("The project has been changed. "
+                       "Do you want to save it before exiting?"),
+                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+        if (ret == QMessageBox::Cancel) {
+            return;
+        }
+
+        if (ret == QMessageBox::Yes) {
+            QString errorString;
+            if (!m_project->save(&errorString)) {
+                QMessageBox::warning(this, tr("Warning"), errorString);
+                return;
+            }
+        }
+    }
+
+    qApp->quit();
 }
 
 void MainWindow::on_startTomato_action_triggered()
@@ -411,41 +477,20 @@ void MainWindow::on_task_treeView_activated(const QModelIndex &index)
     m_tomato->setActiveTask(Task::variantToPtr(index.data(Qt::UserRole)));
 }
 
+void MainWindow::trayIcon_activated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (reason == QSystemTrayIcon::Trigger) {
+        if (isHidden())
+            show();
+        else
+            hide();
+    }
+}
+
 void MainWindow::closeEvent(QCloseEvent *closeEvent)
 {
-    G_SETTINGS_INIT();
-
-    if (m_project->hasChanges() && settings.value(SettingsPlayWorkingFinishSound, true).toBool()) {
-        QString errorString;
-        if (!m_project->save(&errorString)) {
-            QMessageBox::warning(this, tr("Warning"), errorString);
-            closeEvent->ignore();
-            return;
-        }
-    } else if (m_project->hasChanges()) {
-        int ret = QMessageBox::question(
-                    this,
-                    tr("Question"),
-                    tr("The project has been changed. "
-                       "Do you want to save it before exiting?"),
-                    QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-
-        if (ret == QMessageBox::Cancel) {
-            closeEvent->ignore();
-            return;
-        }
-
-        if (ret == QMessageBox::Yes) {
-            QString errorString;
-            if (!m_project->save(&errorString)) {
-                QMessageBox::warning(this, tr("Warning"), errorString);
-                closeEvent->ignore();
-                return;
-            }
-        }
-    }
-
-    closeEvent->accept();
+    hide();
+    closeEvent->ignore();
 }
 
 void MainWindow::updateWindowTitle()
@@ -497,6 +542,7 @@ void MainWindow::updateTomatoActions()
         break;
     case Tomato::OverWorking:
         ui->startTomato_action->setText(tr("S&tart resting"));
+        ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->startTomato_action->setToolTip(tr("Start resting"));
         ui->startTomato_action->setIconText(tr("Start resting"));
         ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartResting));
@@ -546,6 +592,78 @@ void MainWindow::updateTaskActions()
     ui->removeAllTasks_action->setEnabled(rootTaskCount > 0);
     ui->expandAllTasks_action->setEnabled(rootTaskCount > 0);
     ui->collapseAllTasks_action->setEnabled(rootTaskCount > 0);
+}
+
+void MainWindow::updateTrayIcon()
+{
+    updateTrayStatusText();
+
+    if (!m_project->isOpen()) {
+        m_trayIcon->setIcon(Theme::icon(Theme::IconApp));
+        return;
+    }
+
+    switch (m_tomato->state()) {
+    case Tomato::Idle:
+        m_trayIcon->setIcon(Theme::icon(Theme::IconApp));
+        break;
+    case Tomato::Working:
+    case Tomato::OverWorking:
+        m_trayIcon->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
+        break;
+    case Tomato::Resting:
+    case Tomato::OverResting:
+        m_trayIcon->setIcon(Theme::icon(Theme::IconActionTomatoStartResting));
+        break;
+    }
+}
+
+void MainWindow::updateTrayStatusText()
+{
+    if (!m_project->isOpen()) {
+        m_trayStatusAction->setText(tr("IDLE"));
+        return;
+    }
+
+    switch (m_tomato->state()) {
+    case Tomato::Idle:
+        m_trayStatusAction->setText(tr("IDLE"));
+        break;
+    case Tomato::Working:
+        m_trayStatusAction->setText(tr("WORKING"));
+        break;
+    case Tomato::OverWorking:
+        m_trayStatusAction->setText(tr("OVERWORKING"));
+        break;
+    case Tomato::Resting:
+        m_trayStatusAction->setText(tr("RESTING"));
+        break;
+    case Tomato::OverResting:
+        m_trayStatusAction->setText(tr("OVERRESTING"));
+        break;
+    }
+
+    qint64 time = 0;
+    switch (m_tomato->state()) {
+    case Tomato::Idle:
+        time = m_tomato->workingTime();
+        break;
+    case Tomato::Working:
+        time = m_tomato->workingTime() - m_tomato->calcTomatoTime();
+        break;
+    case Tomato::OverWorking:
+        time = m_tomato->calcTomatoTime() - m_tomato->workingTime();
+        break;
+    case Tomato::Resting:
+        time = m_tomato->restingTime() - m_tomato->calcTomatoTime();
+        break;
+    case Tomato::OverResting:
+        time = m_tomato->calcTomatoTime() - m_tomato->restingTime();
+        break;
+    }
+
+    m_trayStatusAction->setText(m_trayStatusAction->text() + ": " + secsToTimeStr(time));
+    m_trayIcon->setToolTip(m_trayStatusAction->text());
 }
 
 void MainWindow::playSound(Tomato::State state)

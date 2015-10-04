@@ -22,7 +22,9 @@
 class Theme
 {
 public:
-    enum Icon {       
+    enum Icon {
+        IconApp,
+
         IconActionTomatoStartWorking,
         IconActionTomatoStartResting,
         IconActionTomatoStop,
