@@ -70,7 +70,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stopTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStop));
 
     G_SETTINGS_INIT();
-    QString projectFileName = settings.value(SettingLastProject, "").toString();
+    QString projectFileName = settings.value(SettingsLastProject, "").toString();
     if (!projectFileName.isEmpty()) {
         QString errorString;
         if (!m_project->open(projectFileName, &errorString)) {
@@ -78,9 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
-    restoreGeometry(settings.value(SettingMainWindowGeometry, saveGeometry()).toByteArray());
-    restoreState(settings.value(SettingMainWindowState, saveState()).toByteArray());
-    ui->task_treeView->header()->restoreState(settings.value(SettingTaskViewHeaderState, ui->task_treeView->header()->saveState()).toByteArray());
+    restoreGeometry(settings.value(SettingsMainWindowGeometry, saveGeometry()).toByteArray());
+    restoreState(settings.value(SettingsMainWindowState, saveState()).toByteArray());
+    ui->task_treeView->header()->restoreState(settings.value(SettingsTaskViewHeaderState, ui->task_treeView->header()->saveState()).toByteArray());
 
     updateWindowTitle();
     updateProjectActions();
@@ -91,10 +91,10 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     G_SETTINGS_INIT();
-    settings.setValue(SettingLastProject, m_project->fileName());
-    settings.setValue(SettingMainWindowGeometry, saveGeometry());
-    settings.setValue(SettingMainWindowState, saveState());
-    settings.setValue(SettingTaskViewHeaderState, ui->task_treeView->header()->saveState());
+    settings.setValue(SettingsLastProject, m_project->fileName());
+    settings.setValue(SettingsMainWindowGeometry, saveGeometry());
+    settings.setValue(SettingsMainWindowState, saveState());
+    settings.setValue(SettingsTaskViewHeaderState, ui->task_treeView->header()->saveState());
 
     delete ui;
 }
@@ -104,7 +104,7 @@ void MainWindow::on_new_action_triggered()
     G_SETTINGS_INIT();
 
     QString proposedDatabaseFileName =
-                settings.value(SettingLastPath, QDir::homePath()).toString()
+                settings.value(SettingsLastPath, QDir::homePath()).toString()
                 + QDir::separator()
                 + DefaultProjectFileName;
 
@@ -121,7 +121,7 @@ void MainWindow::on_new_action_triggered()
     if (!m_project->create(fileName, &errorString)) {
         QMessageBox::warning(this, tr("Warning"), errorString);
     } else {
-        settings.setValue(SettingLastPath, QFileInfo(fileName).absolutePath());
+        settings.setValue(SettingsLastPath, QFileInfo(fileName).absolutePath());
     }
 
     updateWindowTitle();
@@ -137,7 +137,7 @@ void MainWindow::on_open_action_triggered()
     QString fileName = QFileDialog::getOpenFileName(
                 this,
                 tr("Open tomato task tracker project"),
-                settings.value(SettingLastPath, QDir::homePath()).toString(),
+                settings.value(SettingsLastPath, QDir::homePath()).toString(),
                 tr("Tomato task tracker files (*.ttt)"));
 
     if (fileName.isEmpty())
@@ -147,7 +147,7 @@ void MainWindow::on_open_action_triggered()
     if (!m_project->open(fileName, &errorString)) {
         QMessageBox::warning(this, tr("Warning"), errorString);
     } else {
-        settings.setValue(SettingLastPath, QFileInfo(fileName).absolutePath());
+        settings.setValue(SettingsLastPath, QFileInfo(fileName).absolutePath());
     }
 
     updateWindowTitle();
@@ -174,7 +174,7 @@ void MainWindow::on_saveAs_action_triggered()
     G_SETTINGS_INIT();
 
     QString proposedDatabaseFileName =
-            settings.value(SettingLastPath, QDir::homePath()).toString()
+            settings.value(SettingsLastPath, QDir::homePath()).toString()
             + QDir::separator()
             + DefaultProjectFileName;
 
@@ -191,7 +191,7 @@ void MainWindow::on_saveAs_action_triggered()
     if (!m_project->saveAs(fileName, &errorString)) {
         QMessageBox::warning(this, tr("Warning"), errorString);
     } else {
-        settings.setValue(SettingLastPath, QFileInfo(fileName).absolutePath());
+        settings.setValue(SettingsLastPath, QFileInfo(fileName).absolutePath());
     }
 
     updateWindowTitle();
@@ -355,13 +355,13 @@ void MainWindow::on_settings_action_triggered()
     G_SETTINGS_INIT();
 
     SettingsDialog dialog(this);
-    dialog.setPlayWorkingFinishSound(settings.value(SettingPlayWorkingFinishSound, true).toBool());
-    dialog.setPlayRestingFinishSound(settings.value(SettingPlayRestingFinishSound, true).toBool());
-    dialog.setSaveChangesOnExit(settings.value(SettingSaveChangesOnExit, true).toBool());
+    dialog.setPlayWorkingFinishSound(settings.value(SettingsPlayWorkingFinishSound, true).toBool());
+    dialog.setPlayRestingFinishSound(settings.value(SettingsPlayRestingFinishSound, true).toBool());
+    dialog.setSaveChangesOnExit(settings.value(SettingsSaveChangesOnExit, true).toBool());
     if (dialog.exec() == QDialog::Accepted) {
-        settings.setValue(SettingPlayWorkingFinishSound, dialog.playWorkingFinishSound());
-        settings.setValue(SettingPlayRestingFinishSound, dialog.playRestingFinishSound());
-        settings.setValue(SettingSaveChangesOnExit, dialog.saveChangesOnExit());
+        settings.setValue(SettingsPlayWorkingFinishSound, dialog.playWorkingFinishSound());
+        settings.setValue(SettingsPlayRestingFinishSound, dialog.playRestingFinishSound());
+        settings.setValue(SettingsSaveChangesOnExit, dialog.saveChangesOnExit());
     }
 }
 
@@ -401,7 +401,7 @@ void MainWindow::closeEvent(QCloseEvent *closeEvent)
 {
     G_SETTINGS_INIT();
 
-    if (m_project->hasChanges() && settings.value(SettingPlayWorkingFinishSound, true).toBool()) {
+    if (m_project->hasChanges() && settings.value(SettingsPlayWorkingFinishSound, true).toBool()) {
         QString errorString;
         if (!m_project->save(&errorString)) {
             QMessageBox::warning(this, tr("Warning"), errorString);
@@ -538,8 +538,8 @@ void MainWindow::playSound(Tomato::State state)
 {
     G_SETTINGS_INIT();
 
-    bool playWorkingSound = settings.value(SettingPlayWorkingFinishSound, true).toBool();
-    bool playRestingSound = settings.value(SettingPlayRestingFinishSound, true).toBool();
+    bool playWorkingSound = settings.value(SettingsPlayWorkingFinishSound, true).toBool();
+    bool playRestingSound = settings.value(SettingsPlayRestingFinishSound, true).toBool();
 
     if ((playWorkingSound && state == Tomato::OverWorking)
             || (playRestingSound && state == Tomato::OverResting)) {

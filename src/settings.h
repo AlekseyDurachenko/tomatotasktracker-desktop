@@ -23,14 +23,14 @@
                 appName(), appName());                                      \
 
 
-const char SettingLastPath[] = "LastPath";
-const char SettingLastProject[] = "LastProjectFileName";
-const char SettingPlayWorkingFinishSound[] = "PlayWorkingFinishSound";
-const char SettingPlayRestingFinishSound[] = "PlayRestingFinishSound";
-const char SettingSaveChangesOnExit[] = "SaveChangesOnExit";
-const char SettingMainWindowGeometry[] = "MainWindow/geometry";
-const char SettingMainWindowState[] = "MainWindow/state";
-const char SettingTaskViewHeaderState[] = "TaskView/header/state";
+const char SettingsLastPath[] = "LastPath";
+const char SettingsLastProject[] = "LastProjectFileName";
+const char SettingsPlayWorkingFinishSound[] = "PlayWorkingFinishSound";
+const char SettingsPlayRestingFinishSound[] = "PlayRestingFinishSound";
+const char SettingsSaveChangesOnExit[] = "SaveChangesOnExit";
+const char SettingsMainWindowGeometry[] = "MainWindow/geometry";
+const char SettingsMainWindowState[] = "MainWindow/state";
+const char SettingsTaskViewHeaderState[] = "TaskView/header/state";
 
 
 #endif // SETTINGS_H
