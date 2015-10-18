@@ -166,10 +166,10 @@ void TaskEditDialog::editTaskTime(QTreeWidgetItem *item)
 
 void TaskEditDialog::initActions()
 {
-    ui->add_action->setIcon(Theme::icon(Theme::IconActionTaskTimeAdd));
-    ui->edit_action->setIcon(Theme::icon(Theme::IconActionTaskTimeEdit));
-    ui->remove_action->setIcon(Theme::icon(Theme::IconActionTaskTimeRemove));
-    ui->removeAll_action->setIcon(Theme::icon(Theme::IconActionTaskTimeRemoveAll));
+    ui->add_action->setIcon(theme::icon(theme::IconActionTaskTimeAdd));
+    ui->edit_action->setIcon(theme::icon(theme::IconActionTaskTimeEdit));
+    ui->remove_action->setIcon(theme::icon(theme::IconActionTaskTimeRemove));
+    ui->removeAll_action->setIcon(theme::icon(theme::IconActionTaskTimeRemoveAll));
 }
 
 void TaskEditDialog::initToolButtons()

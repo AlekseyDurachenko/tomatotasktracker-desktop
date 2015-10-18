@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Theme::init();
+    theme::init();
 
     MainWindow w;
     w.show();

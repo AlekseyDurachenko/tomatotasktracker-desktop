@@ -37,6 +37,20 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->new_action->setIcon(theme::icon(theme::IconActionDocumentNew));
+    ui->open_action->setIcon(theme::icon(theme::IconActionDocumentOpen));
+    ui->save_action->setIcon(theme::icon(theme::IconActionDocumentSave));
+    ui->saveAs_action->setIcon(theme::icon(theme::IconActionDocumentSaveAs));
+    ui->close_action->setIcon(theme::icon(theme::IconActionDocumentClose));
+    ui->properties_action->setIcon(theme::icon(theme::IconActionDocumentProperties));
+    ui->quit_action->setIcon(theme::icon(theme::IconActionQuit));
+    ui->addTask_action->setIcon(theme::icon(theme::IconActionTaskAdd));
+    ui->editTask_action->setIcon(theme::icon(theme::IconActionTaskEdit));
+    ui->removeTask_action->setIcon(theme::icon(theme::IconActionTaskRemove));
+    ui->removeAllTasks_action->setIcon(theme::icon(theme::IconActionTaskRemoveAll));
+    ui->settings_action->setIcon(theme::icon(theme::IconActionSettings));
+    ui->about_action->setIcon(theme::icon(theme::IconActionAbout));
+    ui->aboutQt_action->setIcon(theme::icon(theme::IconActionAboutQt));
 
     m_tomato = new Tomato(this);
     connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
@@ -78,7 +92,7 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->tomato_widget, SLOT(updateTomatoStatus()));    
     connect(m_tomatoTimer, SIGNAL(timeout()),
             this, SLOT(updateTrayStatusText()));
-    ui->stopTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStop));
+    ui->stopTomato_action->setIcon(theme::icon(theme::IconActionStop));
 
     m_trayStatusAction = new QAction(this);
     m_trayStatusAction->setEnabled(false);
@@ -88,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(trayIcon_activated(QSystemTrayIcon::ActivationReason)));
     connect(m_trayIcon, SIGNAL(messageClicked()),
             this, SLOT(show()));
-    m_trayIcon->setIcon(Theme::icon(Theme::IconApp));
+    m_trayIcon->setIcon(theme::icon(theme::IconApp));
     m_trayIcon->setVisible(true);
     m_trayIconMenu = new QMenu(this);
     m_trayIconMenu->addAction(m_trayStatusAction);
@@ -454,7 +468,7 @@ void MainWindow::on_settings_action_triggered()
 void MainWindow::on_about_action_triggered()
 {
     AboutDialog dialog(this);
-    dialog.setPixmap(QPixmap::fromImage(Theme::appIconImage()));
+    dialog.setPixmap(QPixmap::fromImage(theme::appImage()));
     dialog.exec();
 }
 
@@ -523,7 +537,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setText(tr("S&tart working"));
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
-        ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
+        ui->startTomato_action->setIcon(theme::icon(theme::IconActionStartWorking));
         ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(false);
         return;
@@ -534,7 +548,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setText(tr("S&tart working"));
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
-        ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
+        ui->startTomato_action->setIcon(theme::icon(theme::IconActionStartWorking));
         ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(false);
         break;
@@ -542,7 +556,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setText(tr("S&tart resting"));
         ui->startTomato_action->setToolTip(tr("Start resting"));
         ui->startTomato_action->setIconText(tr("Start resting"));
-        ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartResting));
+        ui->startTomato_action->setIcon(theme::icon(theme::IconActionStartResting));
         ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
@@ -551,7 +565,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->startTomato_action->setToolTip(tr("Start resting"));
         ui->startTomato_action->setIconText(tr("Start resting"));
-        ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartResting));
+        ui->startTomato_action->setIcon(theme::icon(theme::IconActionStartResting));
         ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
@@ -559,7 +573,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setText(tr("S&tart working"));
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
-        ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
+        ui->startTomato_action->setIcon(theme::icon(theme::IconActionStartWorking));
         ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
@@ -567,7 +581,7 @@ void MainWindow::updateTomatoActions()
         ui->startTomato_action->setText(tr("S&tart working"));
         ui->startTomato_action->setToolTip(tr("Start working"));
         ui->startTomato_action->setIconText(tr("Start working"));
-        ui->startTomato_action->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
+        ui->startTomato_action->setIcon(theme::icon(theme::IconActionStartWorking));
         ui->startTomato_action->setEnabled(m_tomato->activeTask());
         ui->stopTomato_action->setEnabled(m_tomato->activeTask());
         break;
@@ -605,21 +619,25 @@ void MainWindow::updateTrayIcon()
     updateTrayStatusText();
 
     if (!m_project->isOpen()) {
-        m_trayIcon->setIcon(Theme::icon(Theme::IconApp));
+        m_trayIcon->setIcon(theme::icon(theme::IconStatusIdle));
         return;
     }
 
     switch (m_tomato->state()) {
     case Tomato::Idle:
-        m_trayIcon->setIcon(Theme::icon(Theme::IconApp));
+        m_trayIcon->setIcon(theme::icon(theme::IconStatusIdle));
         break;
     case Tomato::Working:
+        m_trayIcon->setIcon(theme::icon(theme::IconStatusWorking));
+        break;
     case Tomato::OverWorking:
-        m_trayIcon->setIcon(Theme::icon(Theme::IconActionTomatoStartWorking));
+        m_trayIcon->setIcon(theme::icon(theme::IconStatusTimeout));
         break;
     case Tomato::Resting:
+        m_trayIcon->setIcon(theme::icon(theme::IconStatusResting));
+        break;
     case Tomato::OverResting:
-        m_trayIcon->setIcon(Theme::icon(Theme::IconActionTomatoStartResting));
+        m_trayIcon->setIcon(theme::icon(theme::IconStatusTimeout));
         break;
     }
 }

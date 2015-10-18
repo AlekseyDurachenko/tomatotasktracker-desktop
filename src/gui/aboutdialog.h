@@ -30,8 +30,10 @@ public:
     virtual ~AboutDialog();
 
     void setPixmap(const QPixmap &pixmap);
+
 private:
     QString fromResource(const QString &resourceName);
+
 private:
     Ui::AboutDialog *ui;
 };

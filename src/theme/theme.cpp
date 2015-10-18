@@ -15,41 +15,62 @@
 #include "theme.h"
 
 
-QHash<Theme::Icon, QIcon> Theme::m_icons;
-QImage Theme::m_appIconImage;
+static QHash<theme::Icon, QIcon> m_icons;
+static QImage m_appImage;
 
 
-void Theme::init()
+void theme::init()
 {
-    m_appIconImage = QImage(":/icons/tomatotasktracker-desktop.png");
+    m_appImage = QImage(":/icons/tomatotasktracker-desktop.png");
 
     m_icons.insert(IconApp, QIcon(":/icons/tomatotasktracker-desktop.png"));
 
-    m_icons.insert(IconActionTomatoStartWorking,    QIcon(":/icons/action-tomato-start-working.png"));
-    m_icons.insert(IconActionTomatoStartResting,    QIcon(":/icons/action-tomato-start-resting.png"));
-    m_icons.insert(IconActionTomatoStop,            QIcon(":/icons/action-tomato-stop.png"));
+    m_icons.insert(IconActionDocumentNew, QIcon(":/icons/action-document-new.png"));
+    m_icons.insert(IconActionDocumentOpen, QIcon(":/icons/action-document-open.png"));
+    m_icons.insert(IconActionDocumentSave, QIcon(":/icons/action-document-save.png"));
+    m_icons.insert(IconActionDocumentSaveAs, QIcon(":/icons/action-document-save-as.png"));
+    m_icons.insert(IconActionDocumentClose, QIcon(":/icons/action-document-close.png"));
+    m_icons.insert(IconActionDocumentProperties, QIcon(":/icons/action-document-properties.png"));
 
-    m_icons.insert(IconActionTaskTimeAdd,       QIcon(":/icons/action-tasktime-add.png"));
-    m_icons.insert(IconActionTaskTimeEdit,      QIcon(":/icons/action-tasktime-edit.png"));
-    m_icons.insert(IconActionTaskTimeRemove,    QIcon(":/icons/action-tasktime-remove.png"));
-    m_icons.insert(IconActionTaskTimeRemoveAll, QIcon(":/icons/action-tasktime-removeall.png"));
+    m_icons.insert(IconActionQuit, QIcon(":/icons/action-quit.png"));
+
+    m_icons.insert(IconActionStartWorking, QIcon(":/icons/action-start-working.png"));
+    m_icons.insert(IconActionStartResting, QIcon(":/icons/action-start-resting.png"));
+    m_icons.insert(IconActionStop, QIcon(":/icons/action-stop.png"));
+
+    m_icons.insert(IconActionTaskAdd, QIcon(":/icons/action-add.png"));
+    m_icons.insert(IconActionTaskEdit, QIcon(":/icons/action-edit.png"));
+    m_icons.insert(IconActionTaskRemove, QIcon(":/icons/action-remove.png"));
+    m_icons.insert(IconActionTaskRemoveAll, QIcon(":/icons/action-remove-all.png"));
+
+    m_icons.insert(IconActionTaskTimeAdd, QIcon(":/icons/action-add.png"));
+    m_icons.insert(IconActionTaskTimeEdit, QIcon(":/icons/action-edit.png"));
+    m_icons.insert(IconActionTaskTimeRemove, QIcon(":/icons/action-remove.png"));
+    m_icons.insert(IconActionTaskTimeRemoveAll, QIcon(":/icons/action-remove-all.png"));
+
+    m_icons.insert(IconActionSettings, QIcon(":/icons/action-settings.png"));
 
     m_icons.insert(IconActionAbout,     QIcon(":/icons/action-about.png"));
     m_icons.insert(IconActionAboutQt,   QIcon(":/icons/action-about-qt.png"));
 
-    m_icons.insert(IconTaskViewTaskActiveAndWorking,    QIcon(":/icons/taskview-task-active-and-started.png"));
-    m_icons.insert(IconTaskViewTaskActive,              QIcon(":/icons/taskview-task-active.png"));
-    m_icons.insert(IconTaskViewTaskInactive,            QIcon(":/icons/taskview-task-inactive.png"));
-    m_icons.insert(IconTaskViewSubtaskActive,           QIcon(":/icons/taskview-task-subtaskactive.png"));
-    m_icons.insert(IconTaskViewTaskDone,                QIcon(":/icons/taskview-task-done.png"));
+    m_icons.insert(IconTaskViewTaskWorking, QIcon(":/icons/task-working.png"));
+    m_icons.insert(IconTaskViewTaskActive, QIcon(":/icons/task-active.png"));
+    m_icons.insert(IconTaskViewTaskInactive, QIcon(":/icons/task-inactive.png"));
+    m_icons.insert(IconTaskViewSubtaskActive, QIcon(":/icons/task-subtask-active.png"));
+    m_icons.insert(IconTaskViewTaskDone, QIcon(":/icons/task-done.png"));
+
+    m_icons.insert(IconStatusIdle, QIcon(":/icons/status-idle.png"));
+    m_icons.insert(IconStatusWorking, QIcon(":/icons/status-working.png"));
+    m_icons.insert(IconStatusResting, QIcon(":/icons/status-resting.png"));
+    m_icons.insert(IconStatusTimeout, QIcon(":/icons/status-timeout.png"));
 }
 
-const QIcon Theme::icon(Icon name, const QIcon &defaultIcon)
+const QIcon theme::icon(Icon name, const QIcon &defaultIcon)
 {
     return m_icons.value(name, defaultIcon);
 }
 
-const QImage &Theme::appIconImage()
+const QImage &theme::appImage()
 {
-    return m_appIconImage;
+    return m_appImage;
 }

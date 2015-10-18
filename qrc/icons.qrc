@@ -1,19 +1,31 @@
 <RCC>
     <qresource prefix="/">
         <file>icons/action-about-qt.png</file>
-        <file>icons/action-tomato-start-resting.png</file>
-        <file>icons/action-tomato-start-working.png</file>
-        <file>icons/action-tomato-stop.png</file>
-        <file>icons/action-tomato-pause.png</file>
-        <file>icons/action-tasktime-add.png</file>
-        <file>icons/action-tasktime-edit.png</file>
-        <file>icons/action-tasktime-remove.png</file>
-        <file>icons/action-tasktime-removeall.png</file>
-        <file>icons/taskview-task-active-and-started.png</file>
-        <file>icons/taskview-task-active.png</file>
-        <file>icons/taskview-task-inactive.png</file>
-        <file>icons/taskview-task-subtaskactive.png</file>
-        <file>icons/taskview-task-done.png</file>
+        <file>icons/action-about.png</file>
+        <file>icons/action-add.png</file>
+        <file>icons/action-document-close.png</file>
+        <file>icons/action-document-new.png</file>
+        <file>icons/action-document-open.png</file>
+        <file>icons/action-document-properties.png</file>
+        <file>icons/action-document-save-as.png</file>
+        <file>icons/action-document-save.png</file>
+        <file>icons/action-edit.png</file>
+        <file>icons/action-quit.png</file>
+        <file>icons/action-remove-all.png</file>
+        <file>icons/action-remove.png</file>
+        <file>icons/action-settings.png</file>
+        <file>icons/action-start-resting.png</file>
+        <file>icons/action-start-working.png</file>
+        <file>icons/action-stop.png</file>
+        <file>icons/status-idle.png</file>
+        <file>icons/status-resting.png</file>
+        <file>icons/status-timeout.png</file>
+        <file>icons/status-working.png</file>
+        <file>icons/task-active.png</file>
+        <file>icons/task-done.png</file>
+        <file>icons/task-inactive.png</file>
+        <file>icons/task-subtask-active.png</file>
+        <file>icons/task-working.png</file>
         <file>icons/tomatotasktracker-desktop.png</file>
     </qresource>
 </RCC>

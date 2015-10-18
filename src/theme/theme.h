@@ -19,38 +19,61 @@
 #include <QIcon>
 
 
-class Theme
-{
-public:
-    enum Icon {
-        IconApp,
+// ----------------------------------------------------------------------
+namespace theme {
+// ----------------------------------------------------------------------
 
-        IconActionTomatoStartWorking,
-        IconActionTomatoStartResting,
-        IconActionTomatoStop,
+enum Icon {
+    IconApp,
 
-        IconActionTaskTimeAdd,
-        IconActionTaskTimeEdit,
-        IconActionTaskTimeRemove,
-        IconActionTaskTimeRemoveAll,
+    IconActionDocumentNew,
+    IconActionDocumentOpen,
+    IconActionDocumentSave,
+    IconActionDocumentSaveAs,
+    IconActionDocumentClose,
 
-        IconActionAbout,
-        IconActionAboutQt,
+    IconActionDocumentProperties,
 
-        IconTaskViewTaskActiveAndWorking,
-        IconTaskViewTaskActive,
-        IconTaskViewSubtaskActive,
-        IconTaskViewTaskInactive,
-        IconTaskViewTaskDone
-    };
+    IconActionQuit,
 
-    static void init();
-    static const QIcon icon(Icon name, const QIcon &defaultIcon = QIcon());
-    static const QImage &appIconImage();
-private:
-    static QHash<Icon, QIcon> m_icons;
-    static QImage m_appIconImage;
+    IconActionStartWorking,
+    IconActionStartResting,
+    IconActionStop,
+
+    IconActionTaskAdd,
+    IconActionTaskEdit,
+    IconActionTaskRemove,
+    IconActionTaskRemoveAll,
+
+    IconActionTaskTimeAdd,
+    IconActionTaskTimeEdit,
+    IconActionTaskTimeRemove,
+    IconActionTaskTimeRemoveAll,
+
+    IconActionSettings,
+
+    IconActionAbout,
+    IconActionAboutQt,
+
+    IconTaskViewTaskWorking,
+    IconTaskViewTaskActive,
+    IconTaskViewSubtaskActive,
+    IconTaskViewTaskInactive,
+    IconTaskViewTaskDone,
+
+    IconStatusIdle,
+    IconStatusWorking,
+    IconStatusResting,
+    IconStatusTimeout
 };
+
+void init();
+const QIcon icon(Icon name, const QIcon &defaultIcon = QIcon());
+const QImage &appImage();
+
+// ----------------------------------------------------------------------
+}
+// ----------------------------------------------------------------------
 
 
 #endif // THEME_H
