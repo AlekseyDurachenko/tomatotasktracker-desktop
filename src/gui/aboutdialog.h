@@ -32,7 +32,7 @@ public:
     void setPixmap(const QPixmap &pixmap);
 
 private:
-    QString fromResource(const QString &resourceName);
+    QString fromFile(const QString &resourceName);
 
 private:
     Ui::AboutDialog *ui;

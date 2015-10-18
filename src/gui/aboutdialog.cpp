@@ -27,11 +27,11 @@ AboutDialog::AboutDialog(QWidget *parent) :
 
     ui->programmTitle_label->setText(tr("%1 - %2").arg(appShortName(), appVersion()));
 
-    ui->about_plainTextEdit->setPlainText(fromResource(":/about/ABOUT"));
-    ui->authors_plainTextEdit->setPlainText(fromResource(":/about/AUTHORS"));
-    ui->changelog_plainTextEdit->setPlainText(fromResource(":/about/CHANGELOG"));
-    ui->license_plainTextEdit->setPlainText(fromResource(":/about/LICENSE"));
-    ui->libraries_plainTextEdit->setPlainText(fromResource(":/about/LIBRARIES"));
+    ui->about_plainTextEdit->setPlainText(fromFile(":/about/ABOUT"));
+    ui->authors_plainTextEdit->setPlainText(fromFile(":/about/AUTHORS"));
+    ui->changelog_plainTextEdit->setPlainText(fromFile(":/about/CHANGELOG"));
+    ui->license_plainTextEdit->setPlainText(fromFile(":/about/LICENSE"));
+    ui->libraries_plainTextEdit->setPlainText(fromFile(":/about/LIBRARIES"));
 }
 
 AboutDialog::~AboutDialog()
@@ -44,7 +44,7 @@ void AboutDialog::setPixmap(const QPixmap &pixmap)
     ui->icon_label->setPixmap(pixmap);
 }
 
-QString AboutDialog::fromResource(const QString &resourceName)
+QString AboutDialog::fromFile(const QString &resourceName)
 {
     QFile text(resourceName);
     if (text.open(QIODevice::ReadOnly))
