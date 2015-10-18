@@ -19,50 +19,66 @@ static QHash<theme::Icon, QIcon> m_icons;
 static QImage m_appImage;
 
 
+static QString themeFileName(const QString &baseFileName)
+{
+    return QString(":/icons/%1.png").arg(baseFileName);
+}
+
+static QIcon themeIcon(const QString &baseFileName)
+{
+    return QIcon(themeFileName(baseFileName));
+}
+
+static QImage themeImage(const QString &baseFileName)
+{
+    return QImage(themeFileName(baseFileName));
+}
+
+
 void theme::init()
 {
-    m_appImage = QImage(":/icons/tomatotasktracker-desktop.png");
+    m_appImage = themeImage("tomatotasktracker-desktop");
 
-    m_icons.insert(IconApp, QIcon(":/icons/tomatotasktracker-desktop.png"));
+    m_icons.insert(IconApp, themeIcon("tomatotasktracker-desktop"));
 
-    m_icons.insert(IconActionDocumentNew, QIcon(":/icons/action-document-new.png"));
-    m_icons.insert(IconActionDocumentOpen, QIcon(":/icons/action-document-open.png"));
-    m_icons.insert(IconActionDocumentSave, QIcon(":/icons/action-document-save.png"));
-    m_icons.insert(IconActionDocumentSaveAs, QIcon(":/icons/action-document-save-as.png"));
-    m_icons.insert(IconActionDocumentClose, QIcon(":/icons/action-document-close.png"));
-    m_icons.insert(IconActionDocumentProperties, QIcon(":/icons/action-document-properties.png"));
+    m_icons.insert(IconActionDocumentNew, themeIcon("action-document-new"));
+    m_icons.insert(IconActionDocumentOpen, themeIcon("action-document-open"));
+    m_icons.insert(IconActionDocumentSave, themeIcon("action-document-save"));
+    m_icons.insert(IconActionDocumentSaveAs, themeIcon("action-document-save-as"));
+    m_icons.insert(IconActionDocumentClose, themeIcon("action-document-close"));
+    m_icons.insert(IconActionDocumentProperties, themeIcon("action-document-properties"));
 
-    m_icons.insert(IconActionQuit, QIcon(":/icons/action-quit.png"));
+    m_icons.insert(IconActionQuit, themeIcon("action-quit"));
 
-    m_icons.insert(IconActionStartWorking, QIcon(":/icons/action-start-working.png"));
-    m_icons.insert(IconActionStartResting, QIcon(":/icons/action-start-resting.png"));
-    m_icons.insert(IconActionStop, QIcon(":/icons/action-stop.png"));
+    m_icons.insert(IconActionStartWorking, themeIcon("action-start-working"));
+    m_icons.insert(IconActionStartResting, themeIcon("action-start-resting"));
+    m_icons.insert(IconActionStop, themeIcon("action-stop"));
 
-    m_icons.insert(IconActionTaskAdd, QIcon(":/icons/action-add.png"));
-    m_icons.insert(IconActionTaskEdit, QIcon(":/icons/action-edit.png"));
-    m_icons.insert(IconActionTaskRemove, QIcon(":/icons/action-remove.png"));
-    m_icons.insert(IconActionTaskRemoveAll, QIcon(":/icons/action-remove-all.png"));
+    m_icons.insert(IconActionTaskAdd, themeIcon("action-add"));
+    m_icons.insert(IconActionTaskEdit, themeIcon("action-edit"));
+    m_icons.insert(IconActionTaskRemove, themeIcon("action-remove"));
+    m_icons.insert(IconActionTaskRemoveAll, themeIcon("action-remove-all"));
 
-    m_icons.insert(IconActionTaskTimeAdd, QIcon(":/icons/action-add.png"));
-    m_icons.insert(IconActionTaskTimeEdit, QIcon(":/icons/action-edit.png"));
-    m_icons.insert(IconActionTaskTimeRemove, QIcon(":/icons/action-remove.png"));
-    m_icons.insert(IconActionTaskTimeRemoveAll, QIcon(":/icons/action-remove-all.png"));
+    m_icons.insert(IconActionTaskTimeAdd, themeIcon("action-add"));
+    m_icons.insert(IconActionTaskTimeEdit, themeIcon("action-edit"));
+    m_icons.insert(IconActionTaskTimeRemove, themeIcon("action-remove"));
+    m_icons.insert(IconActionTaskTimeRemoveAll, themeIcon("action-remove-all"));
 
-    m_icons.insert(IconActionSettings, QIcon(":/icons/action-settings.png"));
+    m_icons.insert(IconActionSettings, themeIcon("action-settings"));
 
-    m_icons.insert(IconActionAbout,     QIcon(":/icons/action-about.png"));
-    m_icons.insert(IconActionAboutQt,   QIcon(":/icons/action-about-qt.png"));
+    m_icons.insert(IconActionAbout,     themeIcon("action-about"));
+    m_icons.insert(IconActionAboutQt,   themeIcon("action-about-qt"));
 
-    m_icons.insert(IconTaskViewTaskWorking, QIcon(":/icons/task-working.png"));
-    m_icons.insert(IconTaskViewTaskActive, QIcon(":/icons/task-active.png"));
-    m_icons.insert(IconTaskViewTaskInactive, QIcon(":/icons/task-inactive.png"));
-    m_icons.insert(IconTaskViewSubtaskActive, QIcon(":/icons/task-subtask-active.png"));
-    m_icons.insert(IconTaskViewTaskDone, QIcon(":/icons/task-done.png"));
+    m_icons.insert(IconTaskViewTaskWorking, themeIcon("task-working"));
+    m_icons.insert(IconTaskViewTaskActive, themeIcon("task-active"));
+    m_icons.insert(IconTaskViewTaskInactive, themeIcon("task-inactive"));
+    m_icons.insert(IconTaskViewSubtaskActive, themeIcon("task-subtask-active"));
+    m_icons.insert(IconTaskViewTaskDone, themeIcon("task-done"));
 
-    m_icons.insert(IconStatusIdle, QIcon(":/icons/status-idle.png"));
-    m_icons.insert(IconStatusWorking, QIcon(":/icons/status-working.png"));
-    m_icons.insert(IconStatusResting, QIcon(":/icons/status-resting.png"));
-    m_icons.insert(IconStatusTimeout, QIcon(":/icons/status-timeout.png"));
+    m_icons.insert(IconStatusIdle, themeIcon("status-idle"));
+    m_icons.insert(IconStatusWorking, themeIcon("status-working"));
+    m_icons.insert(IconStatusResting, themeIcon("status-resting"));
+    m_icons.insert(IconStatusTimeout, themeIcon("status-timeout"));
 }
 
 const QIcon theme::icon(Icon name, const QIcon &defaultIcon)

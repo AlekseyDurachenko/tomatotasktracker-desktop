@@ -72,9 +72,8 @@ const QIcon icon(Icon name, const QIcon &defaultIcon = QIcon());
 const QImage &appImage();
 
 // ----------------------------------------------------------------------
-}
+} // namespace theme
 // ----------------------------------------------------------------------
 
 
 #endif // THEME_H
-
