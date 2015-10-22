@@ -18,8 +18,8 @@
 #include "tomato.h"
 #include "project.h"
 #include "taskitemmodel.h"
+#include "systemtrayicon.h"
 #include <QMainWindow>
-#include <QSystemTrayIcon>
 class TaskFilterProxyModel;
 
 
@@ -73,9 +73,13 @@ private slots:
     void updateProjectActions();
     void updateTomatoActions();
     void updateTaskActions();
-    void updateTrayIcon();
-    void updateTrayStatusText();
     void playSound(Tomato::State state);
+
+private slots:
+    void updateSystemTrayIcon();
+
+private:
+    void createSystemTrayIcon();
 
 private:
     Ui::MainWindow *ui;
@@ -84,9 +88,7 @@ private:
     Project *m_project;
     Tomato *m_tomato;
 
-    QSystemTrayIcon *m_trayIcon;
-    QMenu *m_trayIconMenu;
-    QAction *m_trayStatusAction;
+    SystemTrayIcon *m_trayIcon;
 };
 
 

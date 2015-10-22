@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowIcon(theme::icon(theme::IconApp));
+
     ui->new_action->setIcon(theme::icon(theme::IconActionDocumentNew));
     ui->open_action->setIcon(theme::icon(theme::IconActionDocumentOpen));
     ui->save_action->setIcon(theme::icon(theme::IconActionDocumentSave));
@@ -56,13 +58,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
             this, SLOT(updateTomatoActions()));
     connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
-            this, SLOT(updateTrayIcon()));
-    connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
             this, SLOT(playSound(Tomato::State)));
     connect(m_tomato, SIGNAL(activeTaskChanged()),
             this, SLOT(updateTomatoActions()));
     connect(m_tomato, SIGNAL(activeTaskChanged()),
             this, SLOT(updateTaskActions()));
+    connect(m_tomato, SIGNAL(stateChanged(Tomato::State)),
+            this, SLOT(updateSystemTrayIcon()));
 
     m_project = new Project(m_tomato, this);
     connect(m_project, SIGNAL(changed()),
@@ -89,30 +91,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(m_tomatoTimer, SIGNAL(timeout()),
             m_tomato, SLOT(updateActiveTaskDisplay()));
     connect(m_tomatoTimer, SIGNAL(timeout()),
-            ui->tomato_widget, SLOT(updateTomatoStatus()));    
+            ui->tomato_widget, SLOT(updateTomatoStatus()));
     connect(m_tomatoTimer, SIGNAL(timeout()),
-            this, SLOT(updateTrayStatusText()));
+            this, SLOT(updateSystemTrayIcon()));
     ui->stopTomato_action->setIcon(theme::icon(theme::IconActionStop));
 
-    m_trayStatusAction = new QAction(this);
-    m_trayStatusAction->setEnabled(false);
 
-    m_trayIcon = new QSystemTrayIcon(this);
-    connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-            this, SLOT(trayIcon_activated(QSystemTrayIcon::ActivationReason)));
-    connect(m_trayIcon, SIGNAL(messageClicked()),
-            this, SLOT(show()));
-    m_trayIcon->setIcon(theme::icon(theme::IconApp));
-    m_trayIcon->setVisible(true);
-    m_trayIconMenu = new QMenu(this);
-    m_trayIconMenu->addAction(m_trayStatusAction);
-    m_trayIconMenu->addSeparator();
-    m_trayIconMenu->addAction(ui->startTomato_action);
-    m_trayIconMenu->addAction(ui->stopTomato_action);
-    m_trayIconMenu->addSeparator();
-    m_trayIconMenu->addAction(ui->quit_action);
-    m_trayIcon->setContextMenu(m_trayIconMenu);
-
+    createSystemTrayIcon();
 
     G_SETTINGS_INIT();
     QString projectFileName = settings.value(SettingsLastProject, "").toString();
@@ -132,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
-    updateTrayIcon();
+    updateSystemTrayIcon();
 }
 
 MainWindow::~MainWindow()
@@ -185,7 +170,7 @@ void MainWindow::on_new_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
-    updateTrayIcon();
+    updateSystemTrayIcon();
 }
 
 void MainWindow::on_open_action_triggered()
@@ -212,7 +197,7 @@ void MainWindow::on_open_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
-    updateTrayIcon();
+    updateSystemTrayIcon();
 }
 
 void MainWindow::on_save_action_triggered()
@@ -226,7 +211,7 @@ void MainWindow::on_save_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
-    updateTrayIcon();
+    updateSystemTrayIcon();
 }
 
 void MainWindow::on_saveAs_action_triggered()
@@ -258,7 +243,7 @@ void MainWindow::on_saveAs_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
-    updateTrayIcon();
+    updateSystemTrayIcon();
 }
 
 void MainWindow::on_close_action_triggered()
@@ -289,7 +274,7 @@ void MainWindow::on_close_action_triggered()
     updateProjectActions();
     updateTomatoActions();
     updateTaskActions();
-    updateTrayIcon();
+    updateSystemTrayIcon();
 }
 
 void MainWindow::on_properties_action_triggered()
@@ -614,82 +599,6 @@ void MainWindow::updateTaskActions()
     ui->collapseAllTasks_action->setEnabled(rootTaskCount > 0);
 }
 
-void MainWindow::updateTrayIcon()
-{
-    updateTrayStatusText();
-
-    if (!m_project->isOpen()) {
-        m_trayIcon->setIcon(theme::icon(theme::IconStatusIdle));
-        return;
-    }
-
-    switch (m_tomato->state()) {
-    case Tomato::Idle:
-        m_trayIcon->setIcon(theme::icon(theme::IconStatusIdle));
-        break;
-    case Tomato::Working:
-        m_trayIcon->setIcon(theme::icon(theme::IconStatusWorking));
-        break;
-    case Tomato::OverWorking:
-        m_trayIcon->setIcon(theme::icon(theme::IconStatusTimeout));
-        break;
-    case Tomato::Resting:
-        m_trayIcon->setIcon(theme::icon(theme::IconStatusResting));
-        break;
-    case Tomato::OverResting:
-        m_trayIcon->setIcon(theme::icon(theme::IconStatusTimeout));
-        break;
-    }
-}
-
-void MainWindow::updateTrayStatusText()
-{
-    if (!m_project->isOpen()) {
-        m_trayStatusAction->setText(tr("IDLE"));
-        return;
-    }
-
-    switch (m_tomato->state()) {
-    case Tomato::Idle:
-        m_trayStatusAction->setText(tr("IDLE"));
-        break;
-    case Tomato::Working:
-        m_trayStatusAction->setText(tr("WORKING"));
-        break;
-    case Tomato::OverWorking:
-        m_trayStatusAction->setText(tr("OVERWORKING"));
-        break;
-    case Tomato::Resting:
-        m_trayStatusAction->setText(tr("RESTING"));
-        break;
-    case Tomato::OverResting:
-        m_trayStatusAction->setText(tr("OVERRESTING"));
-        break;
-    }
-
-    qint64 time = 0;
-    switch (m_tomato->state()) {
-    case Tomato::Idle:
-        time = m_tomato->workingTime();
-        break;
-    case Tomato::Working:
-        time = m_tomato->workingTime() - m_tomato->calcTomatoTime();
-        break;
-    case Tomato::OverWorking:
-        time = m_tomato->calcTomatoTime() - m_tomato->workingTime();
-        break;
-    case Tomato::Resting:
-        time = m_tomato->restingTime() - m_tomato->calcTomatoTime();
-        break;
-    case Tomato::OverResting:
-        time = m_tomato->calcTomatoTime() - m_tomato->restingTime();
-        break;
-    }
-
-    m_trayStatusAction->setText(m_trayStatusAction->text() + ": " + secsToTimeStr(time));
-    m_trayIcon->setToolTip(m_trayStatusAction->text());
-}
-
 void MainWindow::playSound(Tomato::State state)
 {
     G_SETTINGS_INIT();
@@ -710,10 +619,33 @@ void MainWindow::playSound(Tomato::State state)
     }
 
     if (showWorkingTrayNotify && state == Tomato::OverWorking) {
-        m_trayIcon->showMessage(tr("Tomato task tracker"), tr("Time for working is over"), QSystemTrayIcon::Information);
+        m_trayIcon->showWorkingTimeoutMessage();
     }
 
     if (showRestingTrayNotify && state == Tomato::OverResting) {
-        m_trayIcon->showMessage(tr("Tomato task tracker"), tr("Time for resting is over"), QSystemTrayIcon::Information);
+        m_trayIcon->showRestingTimeoutMessage();
     }
+}
+
+void MainWindow::updateSystemTrayIcon()
+{
+    m_trayIcon->update();
+}
+
+void MainWindow::createSystemTrayIcon()
+{
+    m_trayIcon = new SystemTrayIcon(m_project, this);
+    connect(m_trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(trayIcon_activated(QSystemTrayIcon::ActivationReason)));
+    connect(m_trayIcon, SIGNAL(messageClicked()),
+            this, SLOT(show()));
+
+    QMenu *trayIconMenu = new QMenu(this);
+    trayIconMenu->addAction(m_trayIcon->statusAction());
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(ui->startTomato_action);
+    trayIconMenu->addAction(ui->stopTomato_action);
+    trayIconMenu->addSeparator();
+    trayIconMenu->addAction(ui->quit_action);
+    m_trayIcon->setContextMenu(trayIconMenu);
 }

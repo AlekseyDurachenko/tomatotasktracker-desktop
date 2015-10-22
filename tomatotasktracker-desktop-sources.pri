@@ -3,6 +3,7 @@ INCLUDEPATH    +=                                                       \
     $$PWD/src/core                                                      \
     $$PWD/src/gui                                                       \
     $$PWD/src/theme                                                     \
+    $$PWD/src/util                                                      \
 
 
 HEADERS        +=                                                       \
@@ -26,7 +27,9 @@ HEADERS        +=                                                       \
     $$PWD/src/core/tomato.h \
     $$PWD/src/gui/propertiesdialog.h \
     $$PWD/src/gui/settingsdialog.h \
-    $$PWD/src/gui/taskfilterproxymodel.h
+    $$PWD/src/gui/taskfilterproxymodel.h \
+    $$PWD/src/gui/systemtrayicon.h \
+    $$PWD/src/util/checkptr.h
 
 SOURCES        +=                                                       \
     $$PWD/src/version.cpp                                               \
@@ -47,7 +50,9 @@ SOURCES        +=                                                       \
     $$PWD/src/core/tomato.cpp \
     $$PWD/src/gui/propertiesdialog.cpp \
     $$PWD/src/gui/settingsdialog.cpp \
-    $$PWD/src/gui/taskfilterproxymodel.cpp
+    $$PWD/src/gui/taskfilterproxymodel.cpp \
+    $$PWD/src/gui/systemtrayicon.cpp \
+    $$PWD/src/util/checkptr.cpp
 
 
 FORMS          +=                                                       \

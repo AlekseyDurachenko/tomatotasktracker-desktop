@@ -25,6 +25,8 @@ class Project : public QObject
 public:
     Project(Tomato *tomato, QObject *parent = 0);
 
+    inline Tomato *tomato() const;
+
     inline bool isOpen() const;
     inline bool hasChanges() const;
     inline const QString &fileName() const;
@@ -44,6 +46,11 @@ private:
     bool m_hasChanges;
     QString m_fileName;
 };
+
+Tomato *Project::tomato() const
+{
+    return m_tomato;
+}
 
 bool Project::isOpen() const
 {
