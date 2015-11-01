@@ -16,29 +16,29 @@
 #define TOMATOWIDGET_H
 
 
-#include "tomato.h"
 #include <QWidget>
+class Project;
+class QToolButton;
+class QLabel;
+class QFrame;
 
-
-namespace Ui {
-class TomatoWidget;
-}
 
 class TomatoWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TomatoWidget(QWidget *parent = 0, Tomato *tomato = 0);
-    virtual ~TomatoWidget();
+    explicit TomatoWidget(Project *project, QWidget *parent = 0);
 
-    void setTaskManager(Tomato *tomato);
-    void setTomatoStartAction(QAction *tomatoStartAction);
-    void setTomatoStopAction(QAction *tomatoStopAction);
-public slots:
-    void updateTomatoStatus();
+private slots:
+    void updateAll();
+
 private:
-    Ui::TomatoWidget *ui;
-    Tomato *m_tomato;
+    QToolButton *m_startToolButton;
+    QToolButton *m_stopToolButton;
+    QLabel *m_timeLabel;
+    QLabel *m_statusLabel;
+    QFrame *m_statusFrame;
+    Project *m_project;
 };
 
 

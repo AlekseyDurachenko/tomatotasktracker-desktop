@@ -12,18 +12,22 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#include "utils.h"
+#ifndef RESOURCES_H
+#define RESOURCES_H
 
 
-QString secsToTimeStr(qint64 secs, bool alwaysShowHours)
-{
-    QString result = (secs < 0) ? "-" : "";
-    if (secs/3600 || alwaysShowHours)
-        result += QString::number(qAbs(secs)/3600) + ":";
+#include <QString>
 
-    result += QString("%1").arg((qAbs(secs)%3600)/60, 2, 10, QChar('0'));
-    result += ":";
-    result += QString("%1").arg(qAbs(secs)%60, 2, 10, QChar('0'));
 
-    return result;
-}
+QString resourcesPath();
+
+QString docsPath();
+QString soundsPath();
+QString languagesPath();
+
+QString docResFileName(const QString &fileName);
+QString soundResFileName(const QString &fileName);
+QString languageResFileName(const QString &fileName);
+
+
+#endif // RESOURCES_H

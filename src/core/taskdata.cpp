@@ -18,7 +18,7 @@
 TaskData::TaskData()
 {
     m_timeLimit = 0;
-    m_isDone = false;
+    m_completed = false;
 }
 
 void TaskData::setTitle(const QString &title)
@@ -36,9 +36,9 @@ void TaskData::setTimeLimit(qint64 timeLimit)
     m_timeLimit = timeLimit;
 }
 
-void TaskData::setDone(bool done)
+void TaskData::setCompleted(bool completed)
 {
-    m_isDone = done;
+    m_completed = completed;
 }
 
 void TaskData::setTimes(const QList<TaskTime> &times)

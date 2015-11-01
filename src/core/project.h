@@ -17,15 +17,27 @@
 
 
 #include "tomato.h"
+#include <QAction>
 
 
 class Project : public QObject
 {
     Q_OBJECT
 public:
-    Project(Tomato *tomato, QObject *parent = 0);
+    explicit Project(QObject *parent = 0);
 
     inline Tomato *tomato() const;
+
+    inline QAction *newAction() const;
+    inline QAction *openAction() const;
+    inline QAction *saveAction() const;
+    inline QAction *saveAsAction() const;
+    inline QAction *closeAction() const;
+
+    inline QAction *propertiesAction() const;
+
+    inline QAction *startAction() const;
+    inline QAction *stopAction() const;
 
     inline bool isOpen() const;
     inline bool hasChanges() const;
@@ -36,11 +48,30 @@ public:
     bool save(QString *reason = 0);
     bool saveAs(const QString &fileName, QString *reason = 0);
     void close();
+
 signals:
-    void changed();
+    void saveStateChanged();
+    void openStateChanged();
+
 private slots:
-    void tomatoSavingDataChanged();
+    void savingDataChanged();
+    void updateActions();
+
 private:
+    void createActions();
+
+private:
+    QAction *m_newAction;
+    QAction *m_openAction;
+    QAction *m_saveAction;
+    QAction *m_saveAsAction;
+    QAction *m_closeAction;
+
+    QAction *m_propertiesAction;
+
+    QAction *m_startAction;
+    QAction *m_stopAction;
+
     Tomato *m_tomato;
 
     bool m_hasChanges;
@@ -50,6 +81,46 @@ private:
 Tomato *Project::tomato() const
 {
     return m_tomato;
+}
+
+QAction *Project::newAction() const
+{
+    return m_newAction;
+}
+
+QAction *Project::openAction() const
+{
+    return m_openAction;
+}
+
+QAction *Project::saveAction() const
+{
+    return m_saveAction;
+}
+
+QAction *Project::saveAsAction() const
+{
+    return m_saveAsAction;
+}
+
+QAction *Project::closeAction() const
+{
+    return m_closeAction;
+}
+
+QAction *Project::propertiesAction() const
+{
+    return m_propertiesAction;
+}
+
+QAction *Project::startAction() const
+{
+    return m_startAction;
+}
+
+QAction *Project::stopAction() const
+{
+    return m_stopAction;
 }
 
 bool Project::isOpen() const

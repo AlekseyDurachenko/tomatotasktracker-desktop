@@ -37,8 +37,10 @@ public:
 
     QDateTime endDateTime() const;
     void setEndDateTime(const QDateTime &dateTime);
+
 protected:
     virtual void accept();
+
 private:
     Ui::TaskTimeEditDialog *ui;
 };

@@ -15,18 +15,19 @@
 #include "task.h"
 
 
-static int m_uniqueCounter = 1;
+static int m_uniqueCounter = 0;
 
 
 Task::Task(const TaskData &data, Task *parent)
 {
+    m_id = (++m_uniqueCounter);
+
     m_data = data;
     m_parent = parent;
-    m_id = ++m_uniqueCounter;
 
-    calcTaskTime();
-    calcTotalSubTasksTime();
-    calcTotalTaskTime();
+    m_totalTime = 0;
+    m_subtasksTime = 0;
+    m_taskTime = 0;
 }
 
 Task::~Task()
@@ -35,72 +36,16 @@ Task::~Task()
         delete task;
 }
 
-void Task::setData(const TaskData &data)
+void Task::calcTotalTime()
 {
-    m_data = data;
-
-    calcTaskTime();
-    calcTotalTaskTime();
-
-    cascadeParentSubtasksTimeUpdate();
+    m_totalTime = m_taskTime + m_subtasksTime;
 }
 
-void Task::addTime(const TaskTime &taskTime)
+void Task::calcSubtasksTime()
 {
-    m_data.addTime(taskTime);
-
-    calcTaskTime();
-    calcTotalTaskTime();
-
-    cascadeParentSubtasksTimeUpdate();
-}
-
-Task *Task::addChild(const TaskData &data)
-{
-    Task *task = new Task(data, this);
-
-    m_children.push_back(task);
-
-    calcTotalSubTasksTime();
-    calcTotalTaskTime();
-
-    cascadeParentSubtasksTimeUpdate();
-
-    return task;
-}
-
-void Task::removeChild(int index)
-{
-    delete m_children.takeAt(index);
-
-    calcTotalSubTasksTime();
-    calcTotalTaskTime();
-
-    cascadeParentSubtasksTimeUpdate();
-}
-
-void Task::removeAllChildren()
-{
-    foreach (Task *task, m_children)
-        delete task;
-    m_children.clear();
-
-    calcTotalSubTasksTime();
-    calcTotalTaskTime();
-
-    cascadeParentSubtasksTimeUpdate();
-}
-
-void Task::calcTotalTaskTime()
-{
-    m_totalTaskTime = m_taskTime + m_totalSubtasksTime;
-}
-
-void Task::calcTotalSubTasksTime()
-{
-    m_totalSubtasksTime = 0;
+    m_subtasksTime = 0;
     foreach (const Task *task, m_children)
-        m_totalSubtasksTime += task->totalTaskTime();
+        m_subtasksTime += task->totalTime();
 }
 
 void Task::calcTaskTime()
@@ -108,25 +53,4 @@ void Task::calcTaskTime()
     m_taskTime = 0;
     foreach (const TaskTime &taskTime, m_data.times())
         m_taskTime += taskTime.total();
-}
-
-void Task::cascadeParentSubtasksTimeUpdate()
-{
-    Task *parent = m_parent;
-    while (parent && parent->parent()) {
-        parent->calcTotalSubTasksTime();
-        parent->calcTotalTaskTime();
-
-        parent = parent->parent();
-    }
-}
-
-QVariant Task::variantFromPtr(Task *task)
-{
-    return QVariant::fromValue<void *>(static_cast<void *>(task));
-}
-
-Task *Task::variantToPtr(const QVariant &task)
-{
-    return static_cast<Task *>(task.value<void *>());
 }

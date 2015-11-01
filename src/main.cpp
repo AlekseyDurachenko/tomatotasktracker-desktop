@@ -13,19 +13,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "theme.h"
+#include "version.h"
+#include "resources.h"
 #include "mainwindow.h"
 #include <QApplication>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QLocale>
 
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
+
+
+    // Qt translator
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app.installTranslator(&qtTranslator);
+    // application translator
+    QTranslator myappTranslator;
+    myappTranslator.load(appName() + QString("_") + QLocale::system().name(),
+                         languagesPath());
+    app.installTranslator(&myappTranslator);
+
 
     theme::init();
 
-    MainWindow w;
-    w.show();
-    int ret = a.exec();
+
+    MainWindow window;
+    window.show();
+    int ret = app.exec();
+
 
     return ret;
 }

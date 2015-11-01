@@ -35,18 +35,20 @@ public:
     inline qint64 timeLimit() const;
     void setTimeLimit(qint64 timeLimit);
 
-    inline bool isDone() const;
-    void setDone(bool done);
+    inline bool isCompleted() const;
+    void setCompleted(bool completed);
 
     inline const QList<TaskTime> &times() const;
     void setTimes(const QList<TaskTime> &times);
+
     void addTimes(const QList<TaskTime> &times);
     void addTime(const TaskTime &time);
+
 private:
     QString m_title;
     QString m_desc;
     qint64 m_timeLimit;
-    bool m_isDone;
+    bool m_completed;
     QList<TaskTime> m_times;
 };
 
@@ -65,9 +67,9 @@ qint64 TaskData::timeLimit() const
     return m_timeLimit;
 }
 
-bool TaskData::isDone() const
+bool TaskData::isCompleted() const
 {
-    return m_isDone;
+    return m_completed;
 }
 
 const QList<TaskTime> &TaskData::times() const

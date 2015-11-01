@@ -1,4 +1,4 @@
-# Copyright 2014-2015, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
+# Copyright 2015, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -43,11 +43,18 @@ debug:UI_DIR        = build/debug/ui
 
 # uncomment this line if you want use application as portable
 # (all files will placed in the application directory)
-#DEFINES += APP_PORTABLE
+# (usage: qmake "DEFINES += APP_PORTABLE")
+DEFINES += APP_PORTABLE
+
+
+# resource prefix. example: /usr/share/tomatotasktracker-desktop
+# if resource prefix not exists, portable mode resources will be used
+#DEFINES += "APP_RESOURCE_PREFIX='/usr/share/tomatotasktracker-desktop'"
 
 
 # uncomment this line if you want deploy the application
 # (this line enables the many additional dialogs)
+# (usage: qmake "DEFINES += APP_DEPLOY")
 #DEFINES += APP_DEPLOY
 
 
@@ -60,7 +67,7 @@ app_patch = $$find(DEFINES, "APP_PATCH=")
 count(app_name,  0):DEFINES += "APP_NAME=$$TARGET"
 count(app_major, 0):DEFINES += "APP_MAJOR=0"
 count(app_minor, 0):DEFINES += "APP_MINOR=1"
-count(app_patch, 0):DEFINES += "APP_PATCH=0"
+count(app_patch, 0):DEFINES += "APP_PATCH=1"
 
 
 # optional variables used for versing

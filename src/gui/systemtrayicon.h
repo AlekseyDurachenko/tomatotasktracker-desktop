@@ -17,7 +17,7 @@
 
 
 #include <QSystemTrayIcon>
-#include <QAction>
+class QAction;
 class Project;
 
 
@@ -30,11 +30,10 @@ public:
     inline QAction *statusAction() const;
 
 public slots:
-    void update();
     void showWorkingTimeoutMessage();
     void showRestingTimeoutMessage();
 
-private:
+private slots:
     void updateTrayText();
     void updateTrayIcon();
 

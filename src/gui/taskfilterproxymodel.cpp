@@ -16,12 +16,14 @@
 #include "task.h"
 #include "tomato.h"
 
+
 TaskFilterProxyModel::TaskFilterProxyModel(Tomato *tomato, QObject *parent)
     : QSortFilterProxyModel(parent)
 {
     m_tomato = tomato;
     m_enabled = false;
-    connect(tomato, SIGNAL(activeTaskChanged()), this, SLOT(invFilter()));
+    connect(tomato, SIGNAL(activeTaskChanged()),
+            this, SLOT(tomato_activeTaskChanged()));
 }
 
 void TaskFilterProxyModel::setEnabled(bool enabled)
@@ -30,18 +32,19 @@ void TaskFilterProxyModel::setEnabled(bool enabled)
     invalidateFilter();
 }
 
-
-bool TaskFilterProxyModel::filterAcceptsRow(int sourceRow,
-        const QModelIndex &sourceParent) const
+bool TaskFilterProxyModel::filterAcceptsRow(
+    int sourceRow,
+    const QModelIndex &sourceParent) const
 {
-    Task *task = static_cast<Task *>(sourceModel()->index(sourceRow, 0, sourceParent).internalPointer());
-    if (m_enabled)
-        return (!task->data().isDone()) || m_tomato->isActiveTask(task);
+    const Task *task = static_cast<Task *>(sourceModel()->index(sourceRow, 0, sourceParent).internalPointer());
+    if (m_enabled) {
+        return ((!task->data().isCompleted()) || m_tomato->findActiveSubtask(task->id()));
+    }
 
     return true;
 }
 
-void TaskFilterProxyModel::invFilter()
+void TaskFilterProxyModel::tomato_activeTaskChanged()
 {
     invalidateFilter();
 }

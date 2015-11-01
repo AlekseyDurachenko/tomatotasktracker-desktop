@@ -16,8 +16,9 @@
 #include "ui_settingsdialog.h"
 
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::SettingsDialog)
+SettingsDialog::SettingsDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::SettingsDialog)
 {
     ui->setupUi(this);
     setWindowTitle(tr("Settings"));
@@ -28,7 +29,7 @@ SettingsDialog::~SettingsDialog()
     delete ui;
 }
 
-bool SettingsDialog::playWorkingFinishSound() const
+bool SettingsDialog::isPlayWorkingFinishSound() const
 {
     return ui->playWorkingSound_checkBox->isChecked();
 }
@@ -38,7 +39,7 @@ void SettingsDialog::setPlayWorkingFinishSound(bool state)
     ui->playWorkingSound_checkBox->setChecked(state);
 }
 
-bool SettingsDialog::playRestingFinishSound() const
+bool SettingsDialog::isPlayRestingFinishSound() const
 {
     return ui->playRestingSound_checkBox->isChecked();
 }
@@ -48,7 +49,7 @@ void SettingsDialog::setPlayRestingFinishSound(bool state)
     ui->playRestingSound_checkBox->setChecked(state);
 }
 
-bool SettingsDialog::showWorkingFinishedTrayNotify() const
+bool SettingsDialog::isShowWorkingFinishedTrayNotify() const
 {
     return ui->showWorkingTrayNotify_checkBox->isChecked();
 }
@@ -58,7 +59,7 @@ void SettingsDialog::setShowWorkingFinishedTrayNotify(bool state)
     ui->showWorkingTrayNotify_checkBox->setChecked(state);
 }
 
-bool SettingsDialog::showRestingFinishedTrayNotify() const
+bool SettingsDialog::isShowRestingFinishedTrayNotify() const
 {
     return ui->showRestingTrayNotify_checkBox->isChecked();
 }
@@ -68,7 +69,7 @@ void SettingsDialog::setShowRestingFinishedTrayNotify(bool state)
     ui->showRestingTrayNotify_checkBox->setChecked(state);
 }
 
-bool SettingsDialog::saveChangesOnExit() const
+bool SettingsDialog::isSaveChangesOnExit() const
 {
     return ui->saveChangesOnExit_checkBox->isChecked();
 }

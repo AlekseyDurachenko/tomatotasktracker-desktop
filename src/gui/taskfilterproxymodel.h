@@ -15,8 +15,10 @@
 #ifndef TASKFILTERPROXYMODEL_H
 #define TASKFILTERPROXYMODEL_H
 
+
 #include <QSortFilterProxyModel>
 class Tomato;
+
 
 class TaskFilterProxyModel : public QSortFilterProxyModel
 {
@@ -27,20 +29,22 @@ public:
 
     inline bool enabled() const;
     void setEnabled(bool enabled);
+
 protected:
-    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 
 private slots:
-    void invFilter();
+    void tomato_activeTaskChanged();
 
 private:
-    bool m_enabled;
     Tomato *m_tomato;
+    bool m_enabled;
 };
 
 bool TaskFilterProxyModel::enabled() const
 {
     return m_enabled;
 }
+
 
 #endif // TASKFILTERPROXYMODEL_H

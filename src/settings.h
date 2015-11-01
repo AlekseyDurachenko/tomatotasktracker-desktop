@@ -15,13 +15,22 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
+
 #include "version.h"
+#include <QCoreApplication>
+#include <QDir>
 
 
-#define G_SETTINGS_INIT()                                                   \
-        QSettings settings(QSettings::IniFormat, QSettings::UserScope,      \
-                appName(), appName());                                      \
-
+#ifdef APP_PORTABLE
+    #define G_SETTINGS_INIT()                                               \
+            QSettings settings(QCoreApplication::applicationDirPath()       \
+                               + QDir::separator()                          \
+                               + "settings.ini", QSettings::IniFormat);
+#else
+    #define G_SETTINGS_INIT()                                               \
+            QSettings settings(QSettings::IniFormat, QSettings::UserScope,  \
+                    appName(), appName());
+#endif
 
 const char SettingsLastPath[] = "LastPath";
 const char SettingsLastProject[] = "LastProjectFileName";
@@ -33,7 +42,7 @@ const char SettingsSaveChangesOnExit[] = "SaveChangesOnExit";
 const char SettingsMainWindowGeometry[] = "MainWindow/geometry";
 const char SettingsMainWindowState[] = "MainWindow/state";
 const char SettingsTaskViewHeaderState[] = "TaskView/header/state";
-const char SettingsHideFinishedTasks[] = "HideFinishedTasks";
+const char SettingsTaskViewHideCompleted[] = "TaskView/hideCompleted";
 
 
 #endif // SETTINGS_H

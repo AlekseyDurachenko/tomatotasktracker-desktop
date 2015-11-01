@@ -15,137 +15,181 @@
 #include "tomato.h"
 #include "consts.h"
 #include <QDateTime>
+#include <QDebug>
+#include <QStack>
 
 
 static QList<Task *> findTaskRecursive(Task *root)
 {
     QList<Task *> result = QList<Task *>() << root;
-    for (int i = 0; i < root->childCount(); ++i)
-        result << findTaskRecursive(root->child(i));
+    for (int i = 0; i < root->children().count(); ++i)
+        result << findTaskRecursive(root->children().at(i));
 
     return result;
+}
+
+static bool findActiveSubtask(const Task *task, const Task *activeTask)
+{
+    if (task == activeTask) {
+        return true;
+    }
+
+    for (int i = 0; i < task->children().count(); ++i)
+        if (findActiveSubtask(task->children().at(i), activeTask))
+            return true;
+
+    return false;
+}
+
+static bool findTaskParentInList(Task *task, const QList<Task *> &list)
+{
+    while (task && task->parent()) {
+        if (list.contains(task->parent()))
+            return true;
+
+        task = task->parent();
+    }
+
+    return false;
 }
 
 
 Tomato::Tomato(QObject *parent) : QObject(parent)
 {
-    m_rootTask = new Task(TaskData(), 0);
-    m_taskHash.insert(m_rootTask->id(), m_rootTask);
+    m_rootTask = createTask(TaskData(), 0);
     m_activeTask = 0;
 
     m_state = Idle;
 
     m_tomatoStartTime = 0;
-
     m_workingTime = DefaultWorkingTime;
     m_restingTime =  DefaultRestingTime;
 
     // configure tomato timer
     m_tomatoTimer.setSingleShot(true);
     connect(&m_tomatoTimer, SIGNAL(timeout()),
-            this, SLOT(tomatoStartTimer_timeout()));
+            this, SLOT(tomatoTimer_timeout()));
+
+    // this timer used for synchronous update the time fields
+    m_timeSyncTimer.setSingleShot(false);
+    m_timeSyncTimer.setInterval(500);
+    connect(&m_timeSyncTimer, SIGNAL(timeout()),
+            this, SIGNAL(timeSyncTimeout()));
+    connect(&m_timeSyncTimer, SIGNAL(timeout()),
+            this, SLOT(timeSyncTimer_timeout()));
 }
 
-void Tomato::setWorkingTime(qint64 workingTime)
+void Tomato::setWorkingTime(qint64 seconds)
 {
-    m_workingTime = workingTime;
+    if (m_workingTime == seconds) {
+        return;
+    }
+
+    m_workingTime = seconds;
     emit workingTimeChanged();
 
-    if (m_state != Working && m_state != OverWorking)
+    if (m_state != Working && m_state != OverWorking) {
         return;
+    }
 
     if (calcTomatoTime() >= m_workingTime) {
         setState(OverWorking);
-    } else {
+    }
+    else {
         setState(Working);
     }
 }
 
-void Tomato::setRestingTime(qint64 restingTime)
+void Tomato::setRestingTime(qint64 seconds)
 {
-    m_restingTime = restingTime;
+    if (m_restingTime == seconds) {
+        return;
+    }
+
+    m_restingTime = seconds;
     emit restingTimeChanged();
 
-    if (m_state != Resting && m_state != OverResting)
+    if (m_state != Resting && m_state != OverResting) {
         return;
+    }
 
     if (calcTomatoTime() >= m_restingTime) {
         setState(OverResting);
-    } else {
+    }
+    else {
         setState(Resting);
     }
 }
 
-QString Tomato::stateText() const
+qint64 Tomato::timestamp() const
 {
-    switch (m_state) {
-    case Idle:
-        return tr("IDLE");
-    case Working:
-        return tr("WORKING");
-    case OverWorking:
-        return tr("OVERWORKING");
-    case Resting:
-        return tr("RESTING");
-    case OverResting:
-        return tr("OVERRESTING");
-    }
-
-    return QString();
+    return QDateTime::currentDateTime().toTime_t();
 }
 
 qint64 Tomato::calcTomatoTime() const
 {
-    if (m_state == Idle)
+    if (m_state == Idle) {
         return 0;
+    }
 
     return timestamp() - m_tomatoStartTime;
 }
 
-qint64 Tomato::calcTaskTime(const Task *task) const
+qint64 Tomato::calcTaskTime(int id) const
 {
-    qint64 total = task->totalTaskTime();
-    if ((m_state == Working || m_state == OverWorking) && isActiveTask(task))
+    const Task *task = findTask(id);
+    qint64 total = task->totalTime();
+    if ((m_state == Working || m_state == OverWorking) && findActiveSubtask(task->id())) {
         total += timestamp() - m_activeTaskStartTime;
+    }
 
     return total;
 }
 
-void Tomato::setActiveTask(Task *task)
+bool Tomato::findActiveSubtask(int taskId) const
 {
-    if (activeTask() == task)
+    return ::findActiveSubtask(findTask(taskId), m_activeTask);
+}
+
+void Tomato::setActiveTask(int taskId)
+{
+    Task *task = findTask(taskId);
+
+    // task is already inactive
+    if (!m_activeTask && !task) {
         return;
+    }
 
-    saveLastTaskTime();
+    // task is already active
+    if (m_activeTask == task) {
+        return;
+    }
 
-    if (activeTask()) {
-        const int index = activeTask()->index();
-        emit aboutToBeTaskDisplayChanged(activeTask()->parent(), index, index);
-        emit taskDisplayChanged(activeTask()->parent(), index, index);
+    // change the active task
+    saveLastTimeToActiveTask();
+    Task *prevActiveTask = m_activeTask;
+    m_activeTask = task;
+    m_activeTaskStartTime = timestamp();
+
+    // start idle regim if active task unseted
+    if (!m_activeTask) {
+        startIdle();
+    }
+
+    if (prevActiveTask) {
+        updateTask(prevActiveTask);
     }
 
     if (task) {
-        const int index = task->index();
-        emit aboutToBeTaskDisplayChanged(task->parent(), index, index);
-        emit taskDisplayChanged(task->parent(), index, index);
+        updateTask(task);
     }
-
-    m_activeTask = task;
-    m_activeTaskStartTime = timestamp();
 
     emit activeTaskChanged();
 }
 
-bool Tomato::isActiveTask(const Task *task) const
+void Tomato::unsetActiveTask()
 {
-    if (task == activeTask())
-        return true;
-
-    for (int i = 0; i < task->childCount(); ++i)
-        if (isActiveTask(task->child(i)))
-            return true;
-
-    return false;
+    setActiveTask(-1);
 }
 
 TaskTime Tomato::calcActiveTaskTime() const
@@ -153,177 +197,279 @@ TaskTime Tomato::calcActiveTaskTime() const
     return TaskTime(m_activeTaskStartTime, timestamp());
 }
 
-void Tomato::setTaskData(Task *task, const TaskData &data)
+const TaskData &Tomato::taskData(int taskId) const
 {
-    cascadeEmitAboutToBeTaskDataChanged(task);
-
-    task->setData(data);
-
-    cascadeEmitTaskDataChanged(task);
+    return findTask(taskId)->data();
 }
 
-void Tomato::addTaskTime(Task *task, const TaskTime &taskTime)
+bool Tomato::setTaskData(int taskId, const TaskData &data)
 {
-    cascadeEmitAboutToBeTaskDataChanged(task);
-
-    task->addTime(taskTime);
-
-    cascadeEmitTaskDataChanged(task);
-}
-
-Task *Tomato::addChildTask(Task *parent, const TaskData &data)
-{
-    int index = parent->childCount();
-
-    cascadeEmitAboutToBeTaskDataChanged(parent);
-    emit aboutToBeTaskInserted(parent, index, index);
-
-    Task *task = parent->addChild(data);
-    m_taskHash.insert(task->id(), task);
-
-    emit taskInserted(parent, index, index);
-    cascadeEmitTaskDataChanged(parent);
-
-    return task;
-}
-
-void Tomato::removeChildTask(Task *parent, int index)
-{
-    if (isActiveTask(parent->child(index))) {
-        startIdle();
-        setActiveTask(0);
-    }
-
-    cascadeEmitAboutToBeTaskDataChanged(parent);
-    emit aboutToBeTaskRemoved(parent, index, index);
-
-    foreach (Task *task, findTaskRecursive(parent->child(index)))
-        m_taskHash.remove(task->id());
-    parent->removeChild(index);
-
-    emit taskRemoved(parent, index, index);
-    cascadeEmitTaskDataChanged(parent);
-}
-
-void Tomato::removeTasks(const QList<Task *> tasks)
-{
-    QList<Task *> uniqueTasks = tasks;
-
-    struct pfunc {
-        static bool taskHasParent(Task *task, const QList<Task *> &list)
-        {
-            while (task && task->parent()) {
-                if (list.contains(task->parent()))
-                    return true;
-
-                task = task->parent();
-            }
-
-            return false;
-        }
-    };
-
-    while (1) {
-        bool itemWasRemoved = false;
-
-        for (int i = 0; i < uniqueTasks.count(); ++i) {
-            if (pfunc::taskHasParent(uniqueTasks[i], uniqueTasks)) {
-                uniqueTasks.removeAt(i);
-                itemWasRemoved = true;
-                break;
-            }
-        }
-
-        if (!itemWasRemoved)
-            break;
-    }
-
-    if (uniqueTasks.contains(activeTask()))
-        setActiveTask(0);
-
-    for (int i = 0; i < uniqueTasks.count(); ++i)
-        removeChildTask(uniqueTasks[i]->parent(), uniqueTasks[i]->index());
-}
-
-void Tomato::removeAllTasks()
-{
-    if (activeTask()) {
-        startIdle();
-        setActiveTask(0);
-    }
-
-    int first = 0;
-    int last = rootTask()->childCount() - 1;
-
-    cascadeEmitAboutToBeTaskDataChanged(rootTask());
-    emit aboutToBeTaskRemoved(rootTask(), first, last);
-
-    foreach (Task *task, findTaskRecursive(rootTask()))
-        m_taskHash.remove(task->id());
-
-    rootTask()->removeAllChildren();
-
-    emit taskRemoved(rootTask(), first, last);
-    cascadeEmitTaskDataChanged(rootTask());
-}
-
-void Tomato::moveTask(Task *task, Task *destParent, int destIndex)
-{
-    if (destIndex == -1 && task->parent() == destParent)
-        return;
-
-    if (!taskCanBeMoved(task, destParent))
-        return;
-
-    if (destIndex == -1)
-        destIndex = destParent->childCount();
-
-    int index = task->index();
-    emit aboutToBeTaskMoved(task->parent(), index, index, destParent, destIndex);
-
-    Task *srcParent = task->parent();
-    srcParent->m_children.removeAt(index);
-    destParent->m_children.insert(destIndex, task);
-    task->m_parent = destParent;
-
-    srcParent->calcTaskTime();
-    srcParent->calcTotalSubTasksTime();
-    srcParent->calcTotalTaskTime();
-    srcParent->cascadeParentSubtasksTimeUpdate();
-    destParent->calcTaskTime();
-    destParent->calcTotalSubTasksTime();
-    destParent->calcTotalTaskTime();
-    destParent->cascadeParentSubtasksTimeUpdate();
-
-    emit taskMoved(srcParent, index, index, destParent, destIndex);
-}
-
-bool Tomato::taskCanBeMoved(Task *task, Task *destParent)
-{
-    if (!task->parent())
+    Task *task = findTask(taskId);
+    if (!task) {
         return false;
+    }
 
-    if (findTaskRecursive(task).contains(destParent))
-        return false;
+    const int index = task->index();
+
+    emit aboutToBeTaskDataChanged(task->parent(), index, index);
+    task->m_data = data;
+    emit taskDataChanged(task->parent(), index, index);
 
     return true;
 }
 
-Task *Tomato::findTask(int id) const
+int Tomato::addTask(int parentTaskId, const TaskData &data)
 {
-    return m_taskHash.value(id, 0);
+    Task *parent = findTask(parentTaskId);
+    Task *task = createTask(data, parent);
+    const int index = parent->children().count();
+
+    emit aboutToBeTaskInserted(parent, index, index);
+    parent->m_children.push_back(task);
+    task->calcTaskTime();
+    task->calcTotalTime();
+    emit taskInserted(parent, index, index);
+
+    Task *tmp = task->parent();
+    while (tmp && tmp->parent()) {
+        const int index = tmp->index();
+
+        emit aboutToBeTaskDataChanged(tmp->parent(), index, index);
+        tmp->calcSubtasksTime();
+        tmp->calcTotalTime();
+        emit taskDataChanged(tmp->parent(), index, index);
+
+        tmp = tmp->parent();
+    }
+
+    return task->id();
+}
+
+void Tomato::removeTask(int taskId)
+{
+    Task *task = findTask(taskId);
+    if (!task) {
+        return;
+    }
+
+    if (task == m_activeTask) {
+        startIdle();
+        unsetActiveTask();
+    }
+
+    Task *parent = task->parent();
+    const int index = task->index();
+
+    emit aboutToBeTaskRemoved(parent, index, index);
+    destroyTask(task);
+    parent->m_children.removeAt(index);
+    emit taskRemoved(parent, index, index);
+
+    Task *tmp = parent;
+    while (tmp && tmp->parent()) {
+        const int index = tmp->index();
+
+        emit aboutToBeTaskDataChanged(tmp->parent(), index, index);
+        tmp->calcSubtasksTime();
+        tmp->calcTotalTime();
+        emit taskDataChanged(tmp->parent(), index, index);
+
+        tmp = tmp->parent();
+    }
+}
+
+void Tomato::removeTasks(const QList<int> taskIds)
+{
+    // convert ids to tasks
+    QList<Task *> uniqueTasks;
+    foreach (const int id, taskIds) {
+        Task *task = findTask(id);
+        if (task) {
+            uniqueTasks.push_back(task);
+        }
+    }
+
+    // remove all child tasks
+    // item1
+    // + item11     (-- will be removed from unique tasks)
+    // + item12     (-- will be removed from unique tasks)
+    //   + item121  (-- will be removed from unique tasks)
+    // item2
+    // item3
+    while (1) {
+        bool removed = false;
+
+        for (int i = 0; i < uniqueTasks.count(); ++i) {
+            if (findTaskParentInList(uniqueTasks[i], uniqueTasks)) {
+                uniqueTasks.removeAt(i);
+                removed = true;
+                break;
+            }
+        }
+
+        if (!removed)
+            break;
+    }
+
+    // stop the tomaton on removing active task
+    if (uniqueTasks.contains(m_activeTask)) {
+        startIdle();
+        unsetActiveTask();
+    }
+
+    foreach (const Task *task, uniqueTasks) {
+        removeTask(task->id());
+    }
+}
+
+void Tomato::removeAllTasks()
+{
+    if (m_activeTask) {
+        startIdle();
+        unsetActiveTask();
+    }
+
+    const int first = 0;
+    const int last = rootTask()->children().count() - 1;
+
+    emit aboutToBeTaskRemoved(rootTask(), first, last);
+    foreach (Task *task, m_rootTask->m_children) {
+        delete task;
+    }
+    m_taskHash.clear();
+    m_taskHash.insert(rootTask()->id(), rootTask());
+    m_rootTask->m_children.clear();
+    emit taskRemoved(rootTask(), first, last);
+}
+
+bool Tomato::moveTask(int taskId, int destParentTaskId, int destIndex)
+{
+    Task *task = findTask(taskId);
+    Task *destParent = findTask(destParentTaskId);
+
+    // task not found
+    if (!task) {
+        return false;
+    }
+
+    // task is root item
+    if (!task->parent()) {
+        return false;
+    }
+
+    // task is the same
+    if (destIndex == -1 && task->parent() == destParent) {
+        return false;
+    }
+
+    // task is parent of destParent
+    if (findTaskRecursive(task).contains(destParent)) {
+        return false;
+    }
+
+    // drop to destParent is append to last position
+    if (destIndex == -1) {
+        destIndex = destParent->children().count();
+    }
+
+    int index = task->index();
+    Task *srcParent = task->parent();
+    emit aboutToBeTaskMoved(srcParent, index, index, destParent, destIndex);
+    destParent->m_children.append(srcParent->m_children.takeAt(index));
+    task->m_parent = destParent;
+    srcParent->calcSubtasksTime();
+    srcParent->calcTotalTime();
+    destParent->calcSubtasksTime();
+    destParent->calcTotalTime();
+    emit taskMoved(srcParent, index, index, destParent, destIndex);
+
+    Task *tmp = srcParent->parent();
+    while (tmp && tmp->parent()) {
+        const int index = tmp->index();
+
+        emit aboutToBeTaskDataChanged(tmp->parent(), index, index);
+        tmp->calcSubtasksTime();
+        tmp->calcTotalTime();
+        emit taskDataChanged(tmp->parent(), index, index);
+
+        tmp = tmp->parent();
+    }
+
+    tmp = destParent->parent();
+    while (tmp && tmp->parent()) {
+        const int index = tmp->index();
+
+        emit aboutToBeTaskDataChanged(tmp->parent(), index, index);
+        tmp->calcSubtasksTime();
+        tmp->calcTotalTime();
+        emit taskDataChanged(tmp->parent(), index, index);
+
+        tmp = tmp->parent();
+    }
+
+    return true;
+}
+
+bool Tomato::taskCanBeMoved(int taskId, int destParentTaskId)
+{
+    Task *task = findTask(taskId);
+    Task *destParent = findTask(destParentTaskId);
+
+    // task not found
+    if (!task) {
+        return false;
+    }
+
+    // task is root item
+    if (!task->parent()) {
+        return false;
+    }
+
+    // task is parent of destParent
+    if (findTaskRecursive(task).contains(destParent)) {
+        return false;
+    }
+
+    return true;
+}
+
+QString Tomato::stateName(State state)
+{
+    switch (state) {
+    case Idle:
+        return tr("IDLE");
+    case Working:
+        return tr("WORKING");
+    case OverWorking:
+        return tr("TIME FOR RESTING");
+    case Resting:
+        return tr("RESTING");
+    case OverResting:
+        return tr("TIME FOR WORKING");
+    }
+
+    return QString();
 }
 
 void Tomato::reset()
 {
     emit aboutToBeReseted();
 
-    m_rootTask->removeAllChildren();
+    foreach (Task *task, m_rootTask->m_children) {
+        delete task;
+    }
+    m_taskHash.clear();
+    m_taskHash.insert(rootTask()->id(), rootTask());
+    m_rootTask->m_children.clear();
+
     m_activeTask = 0;
+
     m_state = Idle;
+
     m_activeTaskStartTime = 0;
     m_workingTime = DefaultWorkingTime;
     m_restingTime = DefaultRestingTime;
+
     m_tomatoTimer.stop();
 
     emit reseted();
@@ -331,57 +477,73 @@ void Tomato::reset()
 
 void Tomato::startWorking()
 {
-    saveLastTaskTime();
+    saveLastTimeToActiveTask();
 
-    if (!activeTask())
+    if (!m_activeTask)
         return;
 
     m_activeTaskStartTime = timestamp();
     m_tomatoStartTime = timestamp();
     m_tomatoTimer.start(m_workingTime * 1000);
     setState(Working);
+
+    m_timeSyncTimer.start();
 }
 
 void Tomato::startResting()
 {
-    saveLastTaskTime();
+    saveLastTimeToActiveTask();
 
-    if (!activeTask())
+    if (!m_activeTask)
         return;
 
     m_tomatoStartTime = timestamp();
     m_tomatoTimer.start(m_restingTime * 1000);
     setState(Resting);
+
+    m_timeSyncTimer.start();
 }
 
 void Tomato::startIdle()
 {
-    saveLastTaskTime();
+    saveLastTimeToActiveTask();
 
-    if (!activeTask())
+    if (!m_activeTask)
         return;
 
     m_tomatoTimer.stop();
     setState(Idle);
+
+    m_timeSyncTimer.stop();
 }
 
-void Tomato::updateActiveTaskDisplay()
+void Tomato::timeSyncTimer_timeout()
 {
-    if (activeTask())
-        updateTask(activeTask());
+    if (m_activeTask)
+        updateTask(m_activeTask);
 }
 
-void Tomato::tomatoStartTimer_timeout()
+void Tomato::tomatoTimer_timeout()
 {
-    if (m_state == Working)
+    if (m_state == Working) {
         setState(OverWorking);
-    else if (m_state == Resting)
+    }
+    else if (m_state == Resting) {
         setState(OverResting);
+    }
 }
 
-qint64 Tomato::timestamp() const
+Task *Tomato::createTask(const TaskData &data, Task *parent)
 {
-    return QDateTime::currentDateTime().toTime_t();
+    Task *task = new Task(data, parent);
+    m_taskHash.insert(task->id(), task);
+    return task;
+}
+
+void Tomato::destroyTask(Task *task)
+{
+    m_taskHash.remove(task->id());
+    delete task;
 }
 
 void Tomato::updateTask(Task *task)
@@ -397,43 +559,50 @@ void Tomato::updateTask(Task *task)
 
 void Tomato::setState(Tomato::State state)
 {
-    if (m_state == state)
+    if (m_state == state) {
         return;
+    }
 
     m_state = state;
-    if (activeTask())
-        updateTask(activeTask());
+    if (m_activeTask) {
+        updateTask(m_activeTask);
+    }
 
     emit stateChanged(m_state);
 }
 
-void Tomato::saveLastTaskTime()
+void Tomato::saveLastTimeToActiveTask()
 {
-    if (activeTask() == 0)
+    if (!m_activeTask) {
         return;
+    }
 
-    if (m_state != Working && m_state != OverWorking)
+    if (m_state != Working  && m_state != OverWorking) {
         return;
+    }
 
     const TaskTime taskTime = TaskTime(m_activeTaskStartTime, timestamp());
-    if (!taskTime.isEmpty())
-        addTaskTime(activeTask(), taskTime);
-}
-
-void Tomato::cascadeEmitAboutToBeTaskDataChanged(Task *task)
-{
-    while (task && task->parent()) {
-        int index = task->index();
-        emit aboutToBeTaskDataChanged(task->parent(), index, index);
-        task = task->parent();
+    if (taskTime.isEmpty()) {
+        return;
     }
-}
 
-void Tomato::cascadeEmitTaskDataChanged(Task *task)
-{
-    while (task && task->parent()) {
-        int index = task->index();
-        emit taskDataChanged(task->parent(), index, index);
-        task = task->parent();
+    const int index = m_activeTask->index();
+    emit aboutToBeTaskDataChanged(m_activeTask->parent(), index, index);
+    m_activeTask->m_data.addTime(taskTime);
+    m_activeTask->calcTaskTime();
+    m_activeTask->calcTotalTime();
+    emit taskDataChanged(m_activeTask->parent(), index, index);
+
+
+    Task *tmp = m_activeTask->parent();
+    while (tmp && tmp->parent()) {
+        const int index = tmp->index();
+
+        emit aboutToBeTaskDataChanged(tmp->parent(), index, index);
+        tmp->calcSubtasksTime();
+        tmp->calcTotalTime();
+        emit taskDataChanged(tmp->parent(), index, index);
+
+        tmp = tmp->parent();
     }
 }

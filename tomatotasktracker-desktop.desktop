@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Tomato task tracker
+Icon=tomatotasktracker-desktop
+TryExec=tomatotasktracker-desktop
+Exec=tomatotasktracker-desktop %F
+Terminal=false
+Categories=Qt;Office;

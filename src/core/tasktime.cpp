@@ -20,7 +20,8 @@ TaskTime::TaskTime(qint64 start, qint64 end)
     if (start < end) {
         m_start = start;
         m_end = end;
-    } else {
+    }
+    else {
         m_start = end;
         m_end = start;
     }

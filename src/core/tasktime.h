@@ -15,13 +15,14 @@
 #ifndef TASKTIME_H
 #define TASKTIME_H
 
+
 #include <QtGlobal>
 
 
 class TaskTime
 {
 public:
-    TaskTime(qint64 start = 0, qint64 end = 0);
+    explicit TaskTime(qint64 start = 0, qint64 end = 0);
 
     inline bool isEmpty() const;
     inline qint64 start() const;

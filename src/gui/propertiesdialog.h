@@ -31,11 +31,11 @@ public:
     explicit PropertiesDialog(QWidget *parent = 0);
     virtual ~PropertiesDialog();
 
-    qint64 workingTime() const;
-    void setWorkingTime(qint64 seconds);
+    int workingTime() const;
+    void setWorkingTime(int seconds);
 
-    qint64 restingTime() const;
-    void setRestingTime(qint64 seconds);
+    int restingTime() const;
+    void setRestingTime(int seconds);
 
 private slots:
     void updateAcceptedButton();

@@ -50,16 +50,16 @@ static QDomElement createTaskElem(QDomDocument doc, const Tomato *tomato, const 
     elem.setAttribute(attrTitle, task->data().title());
     elem.setAttribute(attrDesc, task->data().desc());
     elem.setAttribute(attrTimeLimit, task->data().timeLimit());
-    elem.setAttribute(attrIsDone, task->data().isDone());
+    elem.setAttribute(attrIsDone, task->data().isCompleted());
 
-    foreach (const TaskTime & taskTime, task->data().times()) {
+    foreach (const TaskTime &taskTime, task->data().times()) {
         QDomElement taskTimeElem = doc.createElement(nsTaskTime);
         taskTimeElem.setAttribute(attrStartTime, taskTime.start());
         taskTimeElem.setAttribute(attrEndTime, taskTime.end());
         elem.appendChild(taskTimeElem);
     }
 
-    if (tomato->activeTask() == task
+    if (tomato->isActiveTask(task->id())
             && (tomato->state() == Tomato::Working
                 || tomato->state() == Tomato::OverWorking)) {
         const TaskTime taskTime = tomato->calcActiveTaskTime();
@@ -71,18 +71,17 @@ static QDomElement createTaskElem(QDomDocument doc, const Tomato *tomato, const 
         }
     }
 
-    for (int i = 0; i < task->childCount(); ++i)
-        elem.appendChild(createTaskElem(doc, tomato, task->child(i)));
+    for (int i = 0; i < task->children().count(); ++i)
+        elem.appendChild(createTaskElem(doc, tomato, task->children().at(i)));
 
     return elem;
 }
 
-static QDomElement createRootTaskElem(QDomDocument doc, const Tomato *tomato)
+static QDomElement createRootTaskElem(QDomDocument doc, const Tomato *tomato, Task *rootTask)
 {
     QDomElement rootTaskElem = doc.createElement(nsRootTask);
-    const Task *rootTask = tomato->rootTask();
-    for (int i = 0; i < rootTask->childCount(); ++i)
-        rootTaskElem.appendChild(createTaskElem(doc, tomato, rootTask->child(i)));
+    for (int i = 0; i < rootTask->children().count(); ++i)
+        rootTaskElem.appendChild(createTaskElem(doc, tomato, rootTask->children().at(i)));
 
     return rootTaskElem;
 }
@@ -113,20 +112,20 @@ static TaskData taskDataFromElem(const QDomElement &taskElem)
     taskData.setTitle(taskElem.attribute(attrTitle, ""));
     taskData.setDesc(taskElem.attribute(attrDesc, ""));
     taskData.setTimeLimit(taskElem.attribute(attrTimeLimit, 0).toLongLong());
-    taskData.setDone(taskElem.attribute(attrIsDone, 0).toInt());
+    taskData.setCompleted(taskElem.attribute(attrIsDone, 0).toInt());
     taskData.setTimes(taskTimesFromElem(taskElem));
 
     return taskData;
 }
 
-static void parceTaskNode(QDomNode node, Tomato *tomato, Task *task)
+static void parceTaskNode(QDomNode node, Tomato *tomato, int taskId)
 {
-    Task *subTask = tomato->addChildTask(task, taskDataFromElem(node.toElement()));
+    int subTaskId = tomato->addTask(taskId, taskDataFromElem(node.toElement()));
 
     node = node.firstChild();
     while (!node.isNull()) {
         if (node.nodeName() == nsTask)
-            parceTaskNode(node, tomato, subTask);
+            parceTaskNode(node, tomato, subTaskId);
 
         node = node.nextSibling();
     }
@@ -142,7 +141,7 @@ bool saveProjectToXml(const QString &fileName, const Tomato *tomato, QString *re
         QDomDocument doc(nsDocType);
         QDomElement projectElem = doc.createElement(nsProject);
         projectElem.appendChild(createSettingsElem(doc, tomato));
-        projectElem.appendChild(createRootTaskElem(doc, tomato));
+        projectElem.appendChild(createRootTaskElem(doc, tomato, tomato->rootTask()));
         doc.appendChild(projectElem);
 
         QByteArray xmlData = doc.toByteArray();
@@ -150,7 +149,8 @@ bool saveProjectToXml(const QString &fileName, const Tomato *tomato, QString *re
             throw output.errorString();
 
         return true;
-    } catch (const QString &error) {
+    }
+    catch (const QString &error) {
         if (reason)
             *reason = error;
     }
@@ -178,11 +178,12 @@ bool loadProjectFromXml(const QString &fileName, Tomato *tomato, QString *reason
                 const QDomElement settingsElem = projectNode.toElement();
                 tomato->setWorkingTime(settingsElem.attribute(attrWorkingTime, QString::number(DefaultWorkingTime)).toInt());
                 tomato->setRestingTime(settingsElem.attribute(attrRestingTime, QString::number(DefaultRestingTime)).toInt());
-            } else if (projectNode.nodeName() == nsRootTask) {
+            }
+            else if (projectNode.nodeName() == nsRootTask) {
                 QDomNode taskRootNode = projectNode.firstChild();
                 while (!taskRootNode.isNull()) {
                     if (taskRootNode.nodeName() == nsTask)
-                        parceTaskNode(taskRootNode, tomato, tomato->rootTask());
+                        parceTaskNode(taskRootNode, tomato, tomato->rootTaskId());
 
                     taskRootNode = taskRootNode.nextSibling();
                 }
@@ -192,7 +193,8 @@ bool loadProjectFromXml(const QString &fileName, Tomato *tomato, QString *reason
         }
 
         return true;
-    } catch (const QString &error) {
+    }
+    catch (const QString &error) {
         if (reason)
             *reason = error;
     }

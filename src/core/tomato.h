@@ -15,14 +15,18 @@
 #ifndef TOMATO_H
 #define TOMATO_H
 
+
 #include "task.h"
 #include <QObject>
 #include <QTimer>
+#include <QDomDocument>
 
 
 class Tomato : public QObject
 {
     Q_OBJECT
+    friend class TaskItemModel;
+    friend bool saveProjectToXml(const QString &, const Tomato *, QString *);
 public:
     enum State {
         Idle,
@@ -31,46 +35,53 @@ public:
         Resting,
         OverResting
     };
+
 public:
     explicit Tomato(QObject *parent = 0);
 
     inline qint64 workingTime() const;
-    void setWorkingTime(qint64 workingTime);
+    void setWorkingTime(qint64 seconds);
 
     inline qint64 restingTime() const;
-    void setRestingTime(qint64 restingTime);
+    void setRestingTime(qint64 seconds);
 
     inline State state() const;
-    QString stateText() const;
 
+    qint64 timestamp() const;
     qint64 calcTomatoTime() const;
-    qint64 calcTaskTime(const Task *task) const;
+    qint64 calcTaskTime(int taskId) const;
 
-    inline Task *activeTask() const;
-    void setActiveTask(Task *task);   
-    bool isActiveTask(const Task *task) const;
+    inline bool hasActiveTask() const;
+    inline bool isActiveTask(int taskId) const;
+    inline int activeTaskId() const;
+    bool findActiveSubtask(int taskId) const;
+    void setActiveTask(int taskId);
+    void unsetActiveTask();
     TaskTime calcActiveTaskTime() const;
 
-    inline Task *rootTask() const;
+    const TaskData &taskData(int taskId) const;
+    bool setTaskData(int taskId, const TaskData &data);
 
-    void setTaskData(Task *task, const TaskData &data);
-    void addTaskTime(Task *task, const TaskTime &taskTime);
-
-    Task *addChildTask(Task *parent, const TaskData &data);
-    void removeChildTask(Task *parent, int index);
-    void removeTasks(const QList<Task *> tasks);
+    int addTask(int parentTaskId, const TaskData &data);
+    void removeTask(int taskId);
+    void removeTasks(const QList<int> taskIds);
     void removeAllTasks();
+    bool moveTask(int taskId, int destParentTaskId, int destIndex);
+    bool taskCanBeMoved(int taskId, int destParentTaskId);
 
-    void moveTask(Task *task, Task *destParent, int destIndex);
-    bool taskCanBeMoved(Task *task, Task *destParent);
+    inline int rootTaskId() const;
+    inline int rootTaskCount() const;
 
-    Task *findTask(int id) const;
+private:
+    inline Task *rootTask() const;
+    inline Task *findTask(int id) const;
+
 signals:
-    void stateChanged(Tomato::State state);
-
-    void activeTaskChanged();
     void workingTimeChanged();
     void restingTimeChanged();
+    void activeTaskChanged();
+    void stateChanged(Tomato::State state);
+    void timeSyncTimeout();
 
     void aboutToBeTaskInserted(Task *parent, int first, int last);
     void taskInserted(Task *parent, int first, int last);
@@ -80,49 +91,56 @@ signals:
     void taskDataChanged(Task *parent, int first, int last);
     void aboutToBeTaskDisplayChanged(Task *parent, int first, int last);
     void taskDisplayChanged(Task *parent, int first, int last);
-    void aboutToBeTaskMoved(Task *sourceParent, int sourceFirst, int sourceLast,
-                            Task *destinationParent, int destinationIndex);
-    void taskMoved(Task *sourceParent, int sourceFirst, int sourceLast,
-                   Task *destinationParent, int destinationIndex);
+    void aboutToBeTaskMoved(Task *sourceParent,
+                            int sourceFirst,
+                            int sourceLast,
+                            Task *destinationParent,
+                            int destinationIndex);
+    void taskMoved(Task *sourceParent,
+                   int sourceFirst,
+                   int sourceLast,
+                   Task *destinationParent,
+                   int destinationIndex);
 
     void aboutToBeReseted();
     void reseted();
 
-public slots:
-    void reset();
+public:
+    static QString stateName(State state);
 
+public slots:
     void startWorking();
     void startResting();
     void startIdle();
 
-    void updateActiveTaskDisplay();
+    void reset();
 
 private slots:
-    void tomatoStartTimer_timeout();
+    void tomatoTimer_timeout();
+    void timeSyncTimer_timeout();
 
 private:
-    qint64 timestamp() const;
+    Task *createTask(const TaskData &data, Task *parent);
+    void destroyTask(Task *task);
 
     void updateTask(Task *task);
     void setState(State state);
-    void saveLastTaskTime();    
-
-    void cascadeEmitAboutToBeTaskDataChanged(Task *task);
-    void cascadeEmitTaskDataChanged(Task *task);
+    void saveLastTimeToActiveTask();
 
 private:
     Task *m_rootTask;
+
     Task *m_activeTask;
     qint64 m_activeTaskStartTime;
 
     State m_state;
 
     qint64 m_tomatoStartTime;
-
     qint64 m_workingTime;
     qint64 m_restingTime;
 
     QTimer m_tomatoTimer;
+    QTimer m_timeSyncTimer;
 
     QHash<int, Task *> m_taskHash;
 };
@@ -142,14 +160,43 @@ Tomato::State Tomato::state() const
     return m_state;
 }
 
-Task *Tomato::activeTask() const
+bool Tomato::hasActiveTask() const
 {
     return m_activeTask;
+}
+
+bool Tomato::isActiveTask(int id) const
+{
+    if (!m_activeTask) {
+        return false;
+    }
+
+    return m_activeTask->id() == id;
+}
+
+int Tomato::activeTaskId() const
+{
+    return m_activeTask->id();
+}
+
+int Tomato::rootTaskId() const
+{
+    return m_rootTask->id();
+}
+
+int Tomato::rootTaskCount() const
+{
+    return m_rootTask->children().count();
 }
 
 Task *Tomato::rootTask() const
 {
     return m_rootTask;
+}
+
+Task *Tomato::findTask(int id) const
+{
+    return m_taskHash.value(id, 0);
 }
 
 

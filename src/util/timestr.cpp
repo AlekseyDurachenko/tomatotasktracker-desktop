@@ -12,14 +12,19 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#ifndef UTILS_H
-#define UTILS_H
+#include "timestr.h"
 
 
-#include <QString>
+QString secsToTimeStr(qint64 secs, bool alwaysShowHours)
+{
+    QString result = (secs < 0) ? "-" : "";
+    if (secs / 3600 || alwaysShowHours) {
+        result += QString::number(qAbs(secs) / 3600) + ":";
+    }
 
+    result += QString("%1:%2")
+              .arg((qAbs(secs) % 3600) / 60, 2, 10, QChar('0'))
+              .arg(qAbs(secs) % 60, 2, 10, QChar('0'));
 
-QString secsToTimeStr(qint64 secs, bool alwaysShowHours = false);
-
-
-#endif // UTILS_H
+    return result;
+}

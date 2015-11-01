@@ -15,18 +15,103 @@
 #ifndef TASKVIEW_H
 #define TASKVIEW_H
 
-#include "task.h"
+
 #include <QTreeView>
+class Task;
+class Project;
+class TaskItemModel;
+class TaskFilterProxyModel;
 
 
 class TaskView : public QTreeView
 {
+    Q_OBJECT
 public:
-    TaskView(QWidget *parent = 0);
+    explicit TaskView(Project *project, QWidget *parent = 0);
 
-    int selectedTaskCount() const;
-    QList<Task *> selectedTasks() const;
+    inline QAction *activateAction() const;
+    inline QAction *addAction() const;
+    inline QAction *editAction() const;
+    inline QAction *removeAction() const;
+    inline QAction *removeAllAction() const;
+    inline QAction *hideCompletedAction() const;
+    inline QAction *expandAllAction() const;
+    inline QAction *collapseAllAction() const;
+
+private slots:
+    void activateAction_triggered();
+    void addAction_triggered();
+    void editAction_triggered();
+    void removeAction_triggered();
+    void removeAllAction_triggered();
+    void hideCompletedAction_toggled(bool hide);
+    void expandAllAction_triggered();
+    void collapseAllAction_triggered();
+    void itemActivated(const QModelIndex &index);
+    void customContextMenu(const QPoint &pos);
+
+private slots:
+    void updateActions();
+
+private:
+    void createActions();
+    QList<int> selectedIds() const;
+
+private:
+    Project *m_project;
+
+    TaskItemModel *m_itemModel;
+    TaskFilterProxyModel *m_filterProxyModel;
+
+    QAction *m_activateAction;
+    QAction *m_addAction;
+    QAction *m_editAction;
+    QAction *m_removeAction;
+    QAction *m_removeAllAction;
+    QAction *m_hideCompletedAction;
+    QAction *m_expandAllAction;
+    QAction *m_collapseAllAction;
 };
+
+QAction *TaskView::activateAction() const
+{
+    return m_activateAction;
+}
+
+QAction *TaskView::addAction() const
+{
+    return m_addAction;
+}
+
+QAction *TaskView::editAction() const
+{
+    return m_editAction;
+}
+
+QAction *TaskView::removeAction() const
+{
+    return m_removeAction;
+}
+
+QAction *TaskView::removeAllAction() const
+{
+    return m_removeAllAction;
+}
+
+QAction *TaskView::hideCompletedAction() const
+{
+    return m_hideCompletedAction;
+}
+
+QAction *TaskView::expandAllAction() const
+{
+    return m_expandAllAction;
+}
+
+QAction *TaskView::collapseAllAction() const
+{
+    return m_collapseAllAction;
+}
 
 
 #endif // TASKVIEW_H

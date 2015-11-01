@@ -15,17 +15,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "tomato.h"
-#include "project.h"
-#include "taskitemmodel.h"
-#include "systemtrayicon.h"
+
 #include <QMainWindow>
-class TaskFilterProxyModel;
+#include <QSystemTrayIcon>
+#include "project.h"
+class SystemTrayIcon;
+class TaskView;
+class TomatoWidget;
 
-
-namespace Ui {
-class MainWindow;
-}
 
 class MainWindow : public QMainWindow
 {
@@ -35,60 +32,53 @@ public:
     virtual ~MainWindow();
 
 private slots:
-    void on_new_action_triggered();
-    void on_open_action_triggered();
-    void on_save_action_triggered();
-    void on_saveAs_action_triggered();
-    void on_close_action_triggered();
-    void on_properties_action_triggered();
-    void on_quit_action_triggered();
-
-    void on_startTomato_action_triggered();
-    void on_stopTomato_action_triggered();
-
-    void on_activateTask_action_triggered();
-    void on_addTask_action_triggered();
-    void on_editTask_action_triggered();
-    void on_removeTask_action_triggered();
-    void on_removeAllTasks_action_triggered();
-    void on_hideFinishedTasks_action_toggled(bool hide);
-    void on_expandAllTasks_action_triggered();
-    void on_collapseAllTasks_action_triggered();
-
-    void on_settings_action_triggered();
-
-    void on_about_action_triggered();
-    void on_aboutQt_action_triggered();
-
-    void on_task_treeView_customContextMenuRequested(const QPoint &pos);
-    void on_task_treeView_activated(const QModelIndex &index);
-
+    void quitAction_triggered();
+    void settingsAction_triggered();
+    void aboutAction_triggered();
+    void aboutQtAction_triggered();
+    void project_newAction_triggered();
+    void project_openAction_triggered();
+    void project_saveAction_triggered();
+    void project_saveAsAction_triggered();
+    void project_closeAction_triggered();
+    void project_propertiesAction_triggered();
+    void project_startAction_triggered();
+    void project_stopAction_triggered();
     void trayIcon_activated(QSystemTrayIcon::ActivationReason reason);
+    void tomatoStateChanged(Tomato::State state);
+
+    void updateWindowTitle();
+    void updateEnableState();
 
 protected:
     void closeEvent(QCloseEvent *closeEvent);
 
-private slots:
-    void updateWindowTitle();
-    void updateProjectActions();
-    void updateTomatoActions();
-    void updateTaskActions();
-    void playSound(Tomato::State state);
-
-private slots:
-    void updateSystemTrayIcon();
-
 private:
+    void saveSettings();
+    void loadSettings();
+    void trySaveProjectOnExit();
+    void loadLastProject();
+
+    void createProject();
+    void createActions();
     void createSystemTrayIcon();
+    void createTaskView();
+    void createTomatoWidget();
+    void createWindowMenu();
+    void createStatusBar();
 
 private:
-    Ui::MainWindow *ui;
-    TaskFilterProxyModel *m_taskFilterProxyModel;
-    QTimer *m_tomatoTimer;
-    Project *m_project;
-    Tomato *m_tomato;
+    QAction *m_quitAction;
+    QAction *m_settingsAction;
+    QAction *m_aboutAction;
+    QAction *m_aboutQtAction;
 
     SystemTrayIcon *m_trayIcon;
+    TaskView *m_taskView;
+    TomatoWidget *m_tomatoWidget;
+    QStatusBar *m_statusBar;
+
+    Project *m_project;
 };
 
 

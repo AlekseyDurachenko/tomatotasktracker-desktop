@@ -15,13 +15,15 @@
 #ifndef CONSTS_H
 #define CONSTS_H
 
+
 #include <QtGlobal>
+
 
 const char DisplayTaskTimeFormat[] = "yyyy-MM-dd HH:mm:ss";
 const qint64 DefaultWorkingTime = 1500;
 const qint64 DefaultRestingTime = 300;
 const char DefaultProjectFileName[] = "untitled.ttt";
-
+const char TaskIdsMimeData[] = "tomatotasktracker-desktop/task-ids";
 
 #endif // CONSTS_H
 

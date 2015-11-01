@@ -13,13 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tasktimeeditdialog.h"
-#include "consts.h"
 #include "ui_tasktimeeditdialog.h"
+#include "consts.h"
 #include <QMessageBox>
 
 
-TaskTimeEditDialog::TaskTimeEditDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::TaskTimeEditDialog)
+TaskTimeEditDialog::TaskTimeEditDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::TaskTimeEditDialog)
 {
     ui->setupUi(this);
     ui->startTime_dateTimeEdit->setDisplayFormat(DisplayTaskTimeFormat);
@@ -61,6 +62,6 @@ void TaskTimeEditDialog::accept()
     } else {
         QMessageBox::warning(this,
                              tr("Warning"),
-                             tr("Please enter correct time interval"));
+                             tr("Please enter a correct time interval"));
     }
 }

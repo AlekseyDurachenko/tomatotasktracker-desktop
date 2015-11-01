@@ -13,25 +13,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "taskeditdialog.h"
+#include "ui_taskeditdialog.h"
 #include "consts.h"
 #include "theme.h"
 #include "tasktimeeditdialog.h"
-#include "ui_taskeditdialog.h"
 #include <QMessageBox>
 #include <QMenu>
 
 
-TaskEditDialog::TaskEditDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::TaskEditDialog)
+TaskEditDialog::TaskEditDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::TaskEditDialog)
 {
     ui->setupUi(this);
+
     initActions();
     initToolButtons();
 
     connect(ui->taskTime_treeWidget, SIGNAL(itemSelectionChanged()),
             this, SLOT(updateActions()));
-    connect(ui->taskTime_treeWidget, SIGNAL(itemActivated(QTreeWidgetItem*, int)),
-            this, SLOT(editTaskTime(QTreeWidgetItem*)));
+    connect(ui->taskTime_treeWidget, SIGNAL(itemActivated(QTreeWidgetItem *, int)),
+            this, SLOT(openEditTaskTimeDialog(QTreeWidgetItem *)));
 
     updateActions();
 }
@@ -50,10 +52,11 @@ TaskData TaskEditDialog::data() const
         data.setTimeLimit(ui->hour_spinBox->value() * 3600
                           + ui->min_spinBox->value() * 60
                           + ui->sec_spinBox->value());
-    } else {
+    }
+    else {
         data.setTimeLimit(0);
     }
-    data.setDone(ui->done_checkBox->isChecked());
+    data.setCompleted(ui->completed_checkBox->isChecked());
 
     QList<TaskTime> taskTimeList;
     for (int i = 0; i < ui->taskTime_treeWidget->topLevelItemCount(); ++i) {
@@ -78,7 +81,7 @@ void TaskEditDialog::setData(const TaskData &taskData)
         ui->min_spinBox->setValue((taskData.timeLimit() % 3600) / 60);
         ui->sec_spinBox->setValue(taskData.timeLimit() % 60);
     }
-    ui->done_checkBox->setChecked(taskData.isDone());
+    ui->completed_checkBox->setChecked(taskData.isCompleted());
 
     foreach (const TaskTime &taskTime, taskData.times()) {
         QTreeWidgetItem *item = new QTreeWidgetItem;
@@ -91,7 +94,7 @@ void TaskEditDialog::setData(const TaskData &taskData)
 void TaskEditDialog::on_add_action_triggered()
 {
     TaskTimeEditDialog dialog(this);
-    dialog.setWindowTitle(tr("Add task time interval"));
+    dialog.setWindowTitle(tr("New time interval"));
     if (dialog.exec() == QDialog::Accepted) {
         QTreeWidgetItem *item = new QTreeWidgetItem;
         item->setText(0, dialog.startDateTime().toString(DisplayTaskTimeFormat));
@@ -102,7 +105,7 @@ void TaskEditDialog::on_add_action_triggered()
 
 void TaskEditDialog::on_edit_action_triggered()
 {
-    editTaskTime(ui->taskTime_treeWidget->selectedItems().first());
+    openEditTaskTimeDialog(ui->taskTime_treeWidget->selectedItems().first());
 }
 
 void TaskEditDialog::on_remove_action_triggered()
@@ -110,7 +113,7 @@ void TaskEditDialog::on_remove_action_triggered()
     if (QMessageBox::question(
                 this,
                 tr("Question"),
-                tr("Are you sure you want to delete selected intervals?"),
+                tr("Are you sure you want to delete selected time intervals?"),
                 QMessageBox::Yes | QMessageBox::No) == QMessageBox::No) {
         return;
     }
@@ -132,7 +135,7 @@ void TaskEditDialog::on_removeAll_action_triggered()
 }
 
 void TaskEditDialog::on_taskTime_treeWidget_customContextMenuRequested(
-        const QPoint &pos)
+    const QPoint &pos)
 {
     QMenu menu(this);
     menu.addAction(ui->add_action);
@@ -140,6 +143,18 @@ void TaskEditDialog::on_taskTime_treeWidget_customContextMenuRequested(
     menu.addAction(ui->remove_action);
     menu.addAction(ui->removeAll_action);
     menu.exec(ui->taskTime_treeWidget->viewport()->mapToGlobal(pos));
+}
+
+void TaskEditDialog::openEditTaskTimeDialog(QTreeWidgetItem *item)
+{
+    TaskTimeEditDialog dialog(this);
+    dialog.setWindowTitle(tr("Edit time interval"));
+    dialog.setStartDateTime(QDateTime::fromString(item->text(0), DisplayTaskTimeFormat));
+    dialog.setEndDateTime(QDateTime::fromString(item->text(1), DisplayTaskTimeFormat));
+    if (dialog.exec() == QDialog::Accepted) {
+        item->setText(0, dialog.startDateTime().toString(DisplayTaskTimeFormat));
+        item->setText(1, dialog.endDateTime().toString(DisplayTaskTimeFormat));
+    }
 }
 
 void TaskEditDialog::updateActions()
@@ -150,18 +165,6 @@ void TaskEditDialog::updateActions()
     ui->edit_action->setEnabled(selectedCount == 1);
     ui->remove_action->setEnabled(selectedCount);
     ui->removeAll_action->setEnabled(count);
-}
-
-void TaskEditDialog::editTaskTime(QTreeWidgetItem *item)
-{
-    TaskTimeEditDialog dialog(this);
-    dialog.setWindowTitle(tr("Edit task time interval"));
-    dialog.setStartDateTime(QDateTime::fromString(item->text(0), DisplayTaskTimeFormat));
-    dialog.setEndDateTime(QDateTime::fromString(item->text(1), DisplayTaskTimeFormat));
-    if (dialog.exec() == QDialog::Accepted) {
-        item->setText(0, dialog.startDateTime().toString(DisplayTaskTimeFormat));
-        item->setText(1, dialog.endDateTime().toString(DisplayTaskTimeFormat));
-    }
 }
 
 void TaskEditDialog::initActions()

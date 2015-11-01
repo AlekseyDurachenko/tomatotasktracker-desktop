@@ -17,12 +17,11 @@
 #include <QPushButton>
 
 
-PropertiesDialog::PropertiesDialog(QWidget *parent) :
-    QDialog(parent), ui(new Ui::PropertiesDialog)
-{    
+PropertiesDialog::PropertiesDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::PropertiesDialog)
+{
     ui->setupUi(this);
-
-    setWindowTitle(tr("Project properties"));
 
     connect(ui->workingHour_spinBox, SIGNAL(valueChanged(int)),
             this, SLOT(updateAcceptedButton()));
@@ -46,28 +45,28 @@ PropertiesDialog::~PropertiesDialog()
     delete ui;
 }
 
-qint64 PropertiesDialog::workingTime() const
+int PropertiesDialog::workingTime() const
 {
     return ui->workingHour_spinBox->value() * 3600
-            + ui->workingMin_spinBox->value() * 60
-            + ui->workingSec_spinBox->value();
+           + ui->workingMin_spinBox->value() * 60
+           + ui->workingSec_spinBox->value();
 }
 
-void PropertiesDialog::setWorkingTime(qint64 seconds)
+void PropertiesDialog::setWorkingTime(int seconds)
 {
     ui->workingHour_spinBox->setValue(seconds / 3600);
     ui->workingMin_spinBox->setValue((seconds % 3600) / 60);
     ui->workingSec_spinBox->setValue(seconds % 60);
 }
 
-qint64 PropertiesDialog::restingTime() const
+int PropertiesDialog::restingTime() const
 {
     return ui->restingHour_spinBox->value() * 3600
-            + ui->restingMin_spinBox->value() * 60
-            + ui->restingSec_spinBox->value();
+           + ui->restingMin_spinBox->value() * 60
+           + ui->restingSec_spinBox->value();
 }
 
-void PropertiesDialog::setRestingTime(qint64 seconds)
+void PropertiesDialog::setRestingTime(int seconds)
 {
     ui->restingHour_spinBox->setValue(seconds / 3600);
     ui->restingMin_spinBox->setValue((seconds % 3600) / 60);
@@ -76,8 +75,10 @@ void PropertiesDialog::setRestingTime(qint64 seconds)
 
 void PropertiesDialog::updateAcceptedButton()
 {
-    if (workingTime() > 0 && restingTime() > 0)
+    if (workingTime() > 0 && restingTime() > 0) {
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-    else
+    }
+    else {
         ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    }
 }

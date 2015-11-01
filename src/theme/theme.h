@@ -15,6 +15,7 @@
 #ifndef THEME_H
 #define THEME_H
 
+
 #include <QHash>
 #include <QIcon>
 

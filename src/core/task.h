@@ -25,52 +25,38 @@ class Task
 {
     friend class Tomato;
 private:
-    Task(const TaskData &data, Task *parent = 0);
+    explicit Task(const TaskData &data, Task *parent = 0);
     ~Task();
+
 public:
     inline int id() const;
-    inline Task *parent() const;
 
     inline const TaskData &data() const;
 
-    inline qint64 totalTaskTime() const;
-    inline qint64 totalSubtasksTime() const;
+    inline qint64 totalTime() const;
+    inline qint64 subtasksTime() const;
     inline qint64 taskTime() const;
 
+    inline Task *parent() const;
     inline int index() const;
-    inline int indexOfChild(const Task *task) const;
-
-    inline int childCount() const;
-    inline Task *child(int index) const;
+    inline const QList<Task *> &children() const;
 
 private:
-    void setData(const TaskData &data);
-    void addTime(const TaskTime &taskTime);
-
-    Task *addChild(const TaskData &data);
-    void removeChild(int index);
-    void removeAllChildren();
-
-    void calcTotalTaskTime();
-    void calcTotalSubTasksTime();
+    void calcTotalTime();
+    void calcSubtasksTime();
     void calcTaskTime();
 
-    void cascadeParentSubtasksTimeUpdate();
-
-public:
-    static QVariant variantFromPtr(Task *task);
-    static Task *variantToPtr(const QVariant &task);
-
 private:
-    Task *m_parent;
     int m_id;
 
     TaskData m_data;
-    QList<Task *> m_children;
 
-    qint64 m_totalTaskTime;
-    qint64 m_totalSubtasksTime;
+    qint64 m_totalTime;
+    qint64 m_subtasksTime;
     qint64 m_taskTime;
+
+    Task *m_parent;
+    QList<Task *> m_children;
 };
 
 int Task::id() const
@@ -78,24 +64,19 @@ int Task::id() const
     return m_id;
 }
 
-Task *Task::parent() const
-{
-    return m_parent;
-}
-
 const TaskData &Task::data() const
 {
     return m_data;
 }
 
-qint64 Task::totalTaskTime() const
+qint64 Task::totalTime() const
 {
-    return m_totalTaskTime;
+    return m_totalTime;
 }
 
-qint64 Task::totalSubtasksTime() const
+qint64 Task::subtasksTime() const
 {
-    return m_totalSubtasksTime;
+    return m_subtasksTime;
 }
 
 qint64 Task::taskTime() const
@@ -103,24 +84,19 @@ qint64 Task::taskTime() const
     return m_taskTime;
 }
 
+Task *Task::parent() const
+{
+    return m_parent;
+}
+
 int Task::index() const
 {
-    return m_parent->indexOfChild(this);
+    return m_parent->children().indexOf(const_cast<Task *>(this));
 }
 
-int Task::childCount() const
+const QList<Task *> &Task::children() const
 {
-    return m_children.count();
-}
-
-Task *Task::child(int index) const
-{
-    return m_children.at(index);
-}
-
-int Task::indexOfChild(const Task *task) const
-{
-    return m_children.indexOf(const_cast<Task *>(task));
+    return m_children;
 }
 
 

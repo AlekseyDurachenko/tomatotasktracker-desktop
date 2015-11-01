@@ -31,19 +31,19 @@ public:
     explicit SettingsDialog(QWidget *parent = 0);
     virtual ~SettingsDialog();
 
-    bool playWorkingFinishSound() const;
+    bool isPlayWorkingFinishSound() const;
     void setPlayWorkingFinishSound(bool state);
 
-    bool playRestingFinishSound() const;
+    bool isPlayRestingFinishSound() const;
     void setPlayRestingFinishSound(bool state);
 
-    bool showWorkingFinishedTrayNotify() const;
+    bool isShowWorkingFinishedTrayNotify() const;
     void setShowWorkingFinishedTrayNotify(bool state);
 
-    bool showRestingFinishedTrayNotify() const;
+    bool isShowRestingFinishedTrayNotify() const;
     void setShowRestingFinishedTrayNotify(bool state);
 
-    bool saveChangesOnExit() const;
+    bool isSaveChangesOnExit() const;
     void setSaveChangesOnExit(bool state);
 
 private:

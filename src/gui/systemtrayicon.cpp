@@ -16,7 +16,8 @@
 #include "project.h"
 #include "tomato.h"
 #include "theme.h"
-#include "utils.h"
+#include "timestr.h"
+#include <QAction>
 
 
 SystemTrayIcon::SystemTrayIcon(Project *project, QObject *parent)
@@ -29,11 +30,19 @@ SystemTrayIcon::SystemTrayIcon(Project *project, QObject *parent)
     m_statusAction = new QAction(this);
     m_statusAction->setEnabled(false);
 
-    update();
-}
+    connect(m_project, SIGNAL(openStateChanged()),
+            this, SLOT(updateTrayText()));
+    connect(m_project, SIGNAL(openStateChanged()),
+            this, SLOT(updateTrayIcon()));
 
-void SystemTrayIcon::update()
-{
+    connect(m_project->tomato(), SIGNAL(stateChanged(Tomato::State)),
+            this, SLOT(updateTrayText()));
+    connect(m_project->tomato(), SIGNAL(stateChanged(Tomato::State)),
+            this, SLOT(updateTrayIcon()));
+
+    connect(m_project->tomato(), SIGNAL(timeSyncTimeout()),
+            this, SLOT(updateTrayText()));
+
     updateTrayIcon();
     updateTrayText();
 }
@@ -56,31 +65,36 @@ void SystemTrayIcon::updateTrayText()
 {
     QString text;
     if (!m_project->isOpen()) {
-        text = tr("IDLE");
+        text = Tomato::stateName(Tomato::Idle);
     }
     else {
         switch (m_project->tomato()->state()) {
         case Tomato::Idle:
-            text = tr("IDLE: %1")
+            text = QString("%1: %2")
+                   .arg(Tomato::stateName(m_project->tomato()->state()))
                    .arg(secsToTimeStr(m_project->tomato()->workingTime()));
             break;
         case Tomato::Working:
-            text = tr("WORKING: %1")
+            text = QString("%1: %2")
+                    .arg(Tomato::stateName(m_project->tomato()->state()))
                    .arg(secsToTimeStr(m_project->tomato()->workingTime()
                                       - m_project->tomato()->calcTomatoTime()));
             break;
         case Tomato::OverWorking:
-            text = tr("OVERWORKING: %1")
+            text = QString("%1: %2")
+                    .arg(Tomato::stateName(m_project->tomato()->state()))
                    .arg(secsToTimeStr(m_project->tomato()->calcTomatoTime()
                                       - m_project->tomato()->workingTime()));
             break;
         case Tomato::Resting:
-            text = tr("RESTING: %1")
+            text = QString("%1: %2")
+                    .arg(Tomato::stateName(m_project->tomato()->state()))
                    .arg(secsToTimeStr(m_project->tomato()->restingTime()
                                       - m_project->tomato()->calcTomatoTime()));
             break;
         case Tomato::OverResting:
-            text = tr("OVERRESTING: %1")
+            text = QString("%1: %2")
+                    .arg(Tomato::stateName(m_project->tomato()->state()))
                    .arg(secsToTimeStr(m_project->tomato()->calcTomatoTime()
                                       - m_project->tomato()->restingTime()));
             break;

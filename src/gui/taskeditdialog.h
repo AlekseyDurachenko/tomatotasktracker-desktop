@@ -15,10 +15,10 @@
 #ifndef TASKEDITDIALOG_H
 #define TASKEDITDIALOG_H
 
+
 #include "taskdata.h"
-#include <QAbstractItemModel>
-#include <QTreeWidget>
 #include <QDialog>
+class QTreeWidgetItem;
 
 
 namespace Ui {
@@ -34,6 +34,7 @@ public:
 
     TaskData data() const;
     void setData(const TaskData &data);
+
 private slots:
     void on_add_action_triggered();
     void on_edit_action_triggered();
@@ -41,11 +42,13 @@ private slots:
     void on_removeAll_action_triggered();
     void on_taskTime_treeWidget_customContextMenuRequested(const QPoint &pos);
 
+    void openEditTaskTimeDialog(QTreeWidgetItem *item);
     void updateActions();
-    void editTaskTime(QTreeWidgetItem *item);
+
 private:
     void initActions();
     void initToolButtons();
+
 private:
     Ui::TaskEditDialog *ui;
 };

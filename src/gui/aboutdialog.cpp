@@ -15,23 +15,24 @@
 #include "aboutdialog.h"
 #include "ui_aboutdialog.h"
 #include "settings.h"
+#include "resources.h"
 #include <QFile>
 
 
-AboutDialog::AboutDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::AboutDialog)
+AboutDialog::AboutDialog(QWidget *parent)
+    : QDialog(parent)
+    , ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
     setWindowTitle(tr("About %1").arg(appShortName()));
 
-    ui->programmTitle_label->setText(tr("%1 - %2").arg(appShortName(), appVersion()));
+    ui->programmTitle_label->setText(QString("%1 - %2").arg(appShortName(), appVersion()));
 
-    ui->about_plainTextEdit->setPlainText(fromFile(":/about/ABOUT"));
-    ui->authors_plainTextEdit->setPlainText(fromFile(":/about/AUTHORS"));
-    ui->changelog_plainTextEdit->setPlainText(fromFile(":/about/CHANGELOG"));
-    ui->license_plainTextEdit->setPlainText(fromFile(":/about/LICENSE"));
-    ui->libraries_plainTextEdit->setPlainText(fromFile(":/about/LIBRARIES"));
+    ui->about_plainTextEdit->setPlainText(fromFile("ABOUT"));
+    ui->authors_plainTextEdit->setPlainText(fromFile("AUTHORS"));
+    ui->changelog_plainTextEdit->setPlainText(fromFile("CHANGELOG"));
+    ui->license_plainTextEdit->setPlainText(fromFile("LICENSE"));
+    ui->libraries_plainTextEdit->setPlainText(fromFile("LIBRARIES"));
 }
 
 AboutDialog::~AboutDialog()
@@ -46,9 +47,9 @@ void AboutDialog::setPixmap(const QPixmap &pixmap)
 
 QString AboutDialog::fromFile(const QString &resourceName)
 {
-    QFile text(resourceName);
+    QFile text(docResFileName(resourceName));
     if (text.open(QIODevice::ReadOnly))
         return QString::fromUtf8(text.readAll());
 
-    return tr("Can't open resource or file: %1").arg(resourceName);
+    return tr("Can't open file: %1").arg(docResFileName(resourceName));
 }
