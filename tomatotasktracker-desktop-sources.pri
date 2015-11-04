@@ -18,6 +18,7 @@ HEADERS        +=                                                       \
     $$PWD/src/core/tomato.h                                             \
     $$PWD/src/gui/aboutdialog.h                                         \
     $$PWD/src/gui/mainwindow.h                                          \
+    $$PWD/src/gui/getopenfilenamewidget.h                               \
     $$PWD/src/gui/propertiesdialog.h                                    \
     $$PWD/src/gui/settingsdialog.h                                      \
     $$PWD/src/gui/systemtrayicon.h                                      \
@@ -31,6 +32,7 @@ HEADERS        +=                                                       \
     $$PWD/src/util/checkptr.h                                           \
     $$PWD/src/util/resources.h                                          \
     $$PWD/src/util/timestr.h                                            \
+    $$PWD/src/util/playsound.h                                          \
 
 
 SOURCES        +=                                                       \
@@ -43,6 +45,7 @@ SOURCES        +=                                                       \
     $$PWD/src/core/tomato.cpp                                           \
     $$PWD/src/gui/aboutdialog.cpp                                       \
     $$PWD/src/gui/mainwindow.cpp                                        \
+    $$PWD/src/gui/getopenfilenamewidget.cpp                             \
     $$PWD/src/gui/propertiesdialog.cpp                                  \
     $$PWD/src/gui/settingsdialog.cpp                                    \
     $$PWD/src/gui/systemtrayicon.cpp                                    \
@@ -56,12 +59,12 @@ SOURCES        +=                                                       \
     $$PWD/src/util/checkptr.cpp                                         \
     $$PWD/src/util/resources.cpp                                        \
     $$PWD/src/util/timestr.cpp                                          \
+    $$PWD/src/util/playsound.cpp                                        \
 
 
 FORMS          +=                                                       \
     $$PWD/src/gui/aboutdialog.ui                                        \
     $$PWD/src/gui/propertiesdialog.ui                                   \
-    $$PWD/src/gui/settingsdialog.ui                                     \
     $$PWD/src/gui/taskeditdialog.ui                                     \
     $$PWD/src/gui/tasktimeeditdialog.ui                                 \
 

@@ -56,6 +56,7 @@ signals:
 private slots:
     void savingDataChanged();
     void updateActions();
+    void syncTimeout();
 
 private:
     void createActions();

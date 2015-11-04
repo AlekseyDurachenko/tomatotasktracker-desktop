@@ -441,11 +441,11 @@ QString Tomato::stateName(State state)
     case Working:
         return tr("WORKING");
     case OverWorking:
-        return tr("TIME FOR RESTING");
+        return tr("IT'S TIME TO REST");
     case Resting:
         return tr("RESTING");
     case OverResting:
-        return tr("TIME FOR WORKING");
+        return tr("IT'S TIME TO WORK");
     }
 
     return QString();

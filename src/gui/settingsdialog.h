@@ -17,11 +17,10 @@
 
 
 #include <QDialog>
+class QCheckBox;
+class QSpinBox;
+class GetOpenFileNameWidget;
 
-
-namespace Ui {
-class SettingsDialog;
-}
 
 class SettingsDialog : public QDialog
 {
@@ -29,13 +28,27 @@ class SettingsDialog : public QDialog
 
 public:
     explicit SettingsDialog(QWidget *parent = 0);
-    virtual ~SettingsDialog();
 
-    bool isPlayWorkingFinishSound() const;
-    void setPlayWorkingFinishSound(bool state);
+    bool isSaveChangesOnExit() const;
+    void setSaveChangesOnExit(bool state);
 
-    bool isPlayRestingFinishSound() const;
-    void setPlayRestingFinishSound(bool state);
+    bool isSaveChangesPeriodically() const;
+    void setSaveChangesPeriodically(bool state);
+
+    int saveChangesInterval() const;
+    void setSaveChangesInterval(int minutes);
+
+    bool playWorkingFinishedSound() const;
+    void setPlayWorkingFinishedSound(bool state);
+
+    bool playRestingFinishedSound() const;
+    void setPlayRestingFinishedSound(bool state);
+
+    QString workingFinishedSound() const;
+    void setWorkingFinishedSound(const QString &fileName);
+
+    QString restingFinishedSound() const;
+    void setRestingFinishedSound(const QString &fileName);
 
     bool isShowWorkingFinishedTrayNotify() const;
     void setShowWorkingFinishedTrayNotify(bool state);
@@ -43,11 +56,16 @@ public:
     bool isShowRestingFinishedTrayNotify() const;
     void setShowRestingFinishedTrayNotify(bool state);
 
-    bool isSaveChangesOnExit() const;
-    void setSaveChangesOnExit(bool state);
-
 private:
-    Ui::SettingsDialog *ui;
+    QCheckBox *m_saveChangesOnExitCheckBox;
+    QCheckBox *m_saveChangesPeriodicallyCheckBox;
+    QSpinBox *m_saveChangesIntervalSpinBox;
+    QCheckBox *m_workingFinishedTrayNotifyCheckBox;
+    QCheckBox *m_restingFinishedTrayNotifyCheckBox;
+    QCheckBox *m_playWorkingFinishedSoundCheckBox;
+    QCheckBox *m_playRestingFinishedSoundCheckBox;
+    GetOpenFileNameWidget *m_workingFinishedSoundWidget;
+    GetOpenFileNameWidget *m_restingFinishedSoundWidget;
 };
 
 

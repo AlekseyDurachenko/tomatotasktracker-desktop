@@ -117,7 +117,7 @@ QVariant TaskItemModel::data(const QModelIndex &index, int role) const
     if (role == Qt::TextColorRole) {
         if (task->data().timeLimit() != 0
                 && task->data().timeLimit() < totalTime) {
-            return Qt::darkRed;
+            return QColor(Qt::darkRed);
         }
     }
 

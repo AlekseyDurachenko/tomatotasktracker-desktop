@@ -18,8 +18,21 @@ TEMPLATE        = app
 TARGET          = tomatotasktracker-desktop
 
 CONFIG         += console debug_and_release
-QT             += core gui xml phonon
-greaterThan(QT_MAJOR_VERSION, 4):QT += widgets
+QT             += core gui xml
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT += widgets multimedia
+    QMAKE_CXXFLAGS += -std=c++11
+    DEFINES += PLATFORM_USING_MULTIMEDIA
+}
+else {
+    unix {
+        QT += phonon
+        DEFINES += PLATFORM_USING_PHONON
+    }
+    win32 {
+        DEFINES += PLATFORM_USING_QSOUND
+    }
+}
 
 
 # release build options
@@ -44,7 +57,7 @@ debug:UI_DIR        = build/debug/ui
 # uncomment this line if you want use application as portable
 # (all files will placed in the application directory)
 # (usage: qmake "DEFINES += APP_PORTABLE")
-DEFINES += APP_PORTABLE
+#DEFINES += APP_PORTABLE
 
 
 # resource prefix. example: /usr/share/tomatotasktracker-desktop

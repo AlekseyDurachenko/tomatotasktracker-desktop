@@ -49,6 +49,10 @@ private slots:
 
     void updateWindowTitle();
     void updateEnableState();
+    void updateSaveChangesTimer();
+
+    void trySaveProjectOnExit();
+    void trySaveProjectOnPeriodically();
 
 protected:
     void closeEvent(QCloseEvent *closeEvent);
@@ -56,7 +60,6 @@ protected:
 private:
     void saveSettings();
     void loadSettings();
-    void trySaveProjectOnExit();
     void loadLastProject();
 
     void createProject();
@@ -66,6 +69,7 @@ private:
     void createTomatoWidget();
     void createWindowMenu();
     void createStatusBar();
+    void createSaveChangesTimer();
 
 private:
     QAction *m_quitAction;
@@ -77,6 +81,7 @@ private:
     TaskView *m_taskView;
     TomatoWidget *m_tomatoWidget;
     QStatusBar *m_statusBar;
+    QTimer *m_saveChangesTimer;
 
     Project *m_project;
 };

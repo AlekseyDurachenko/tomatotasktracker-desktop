@@ -17,6 +17,7 @@
 #include "tomato.h"
 #include "theme.h"
 #include "timestr.h"
+#include "version.h"
 #include <QAction>
 
 
@@ -49,15 +50,15 @@ SystemTrayIcon::SystemTrayIcon(Project *project, QObject *parent)
 
 void SystemTrayIcon::showWorkingTimeoutMessage()
 {
-    showMessage(tr("Tomato task tracker"),
-                tr("The work time is over"),
+    showMessage(appName(),
+                tr("It's time to rest"),
                 QSystemTrayIcon::Information);
 }
 
 void SystemTrayIcon::showRestingTimeoutMessage()
 {
-    showMessage(tr("Tomato task tracker"),
-                tr("The rest time is over"),
+    showMessage(appName(),
+                tr("It's time to work"),
                 QSystemTrayIcon::Information);
 }
 

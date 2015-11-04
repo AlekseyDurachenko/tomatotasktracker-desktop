@@ -20,10 +20,19 @@
 
 
 const char DisplayTaskTimeFormat[] = "yyyy-MM-dd HH:mm:ss";
-const qint64 DefaultWorkingTime = 1500;
-const qint64 DefaultRestingTime = 300;
+const qint64 DefaultWorkingTime = 1500;     // seconds
+const qint64 DefaultRestingTime = 300;      // seconds
+const bool DefaultSettingsSavingChangesOnExit = true;
+const bool DefaultSettingsSavingChangesPeriodically = true;
+const qint64 DefaultSettingsSaveChangesInterval = 5;    // minutes
+const bool DefaultSettingsPlayWorkingFinishedSound = true;
+const bool DefaultSettingsPlayRestingFinishedSound = true;
+const bool DefaultSettingsShowWorkingFinishTrayNotify = true;
+const bool DefaultSettingsShowRestingFinishTrayNotify = true;
 const char DefaultProjectFileName[] = "untitled.ttt";
+const char DefaultNotifySound[] = "notify.wav";
 const char TaskIdsMimeData[] = "tomatotasktracker-desktop/task-ids";
+
 
 #endif // CONSTS_H
 

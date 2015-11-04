@@ -40,6 +40,8 @@ Project::Project(QObject *parent)
     connect(m_tomato, SIGNAL(activeTaskChanged()),
             this, SLOT(updateActions()));
 
+    connect(m_tomato, SIGNAL(timeSyncTimeout()), this, SLOT(syncTimeout()));
+
     m_fileName.clear();
     m_hasChanges = false;
     updateActions();
@@ -196,6 +198,20 @@ void Project::updateActions()
         m_startAction->setText(tr("&Start working"));
         m_startAction->setIcon(theme::icon(theme::IconActionStartWorking));
         m_stopAction->setEnabled(false);
+    }
+}
+
+void Project::syncTimeout()
+{
+    if (!m_hasChanges) {
+        switch (m_tomato->state()) {
+        case Tomato::Working:
+        case Tomato::OverWorking:
+            savingDataChanged();
+            break;
+        default:
+            break;
+        }
     }
 }
 

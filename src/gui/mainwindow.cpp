@@ -18,6 +18,7 @@
 #include "settings.h"
 #include "theme.h"
 #include "resources.h"
+#include "playsound.h"
 #include "propertiesdialog.h"
 #include "settingsdialog.h"
 #include "aboutdialog.h"
@@ -34,7 +35,6 @@
 #include <QHeaderView>
 #include <QApplication>
 #include <QVBoxLayout>
-#include <phonon/phonon>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -50,21 +50,46 @@ MainWindow::MainWindow(QWidget *parent)
     createTomatoWidget();
     createWindowMenu();
     createStatusBar();
+    createSaveChangesTimer();
+
+    QFrame *frame = new QFrame(this);
+    frame->setLayout(new QHBoxLayout);
+    frame->layout()->addWidget(m_tomatoWidget);
+    frame->setFrameShape(QFrame::StyledPanel);
+    frame->setFrameShadow(QFrame::Raised);
+    frame->layout()->setMargin(0);
 
     QWidget *widget = new QWidget(this);
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(0);
     layout->addWidget(m_taskView);
-    layout->addWidget(m_tomatoWidget);
+    layout->addWidget(frame);
     widget->setLayout(layout);
     setCentralWidget(widget);
 
     loadSettings();
-    loadLastProject();
+
+    if (qApp->arguments().count() == 1) {
+        loadLastProject();
+    }
+    else if (qApp->arguments().count() != 2) {
+        QMessageBox::information(this,
+                                 tr("Usage"),
+                                 tr("Usage: %1 <filename>").arg(appName()));
+        qApp->quit();
+    }
+    else {
+        QString projectFileName = qApp->arguments().at(1);
+        QString errorString;
+        if (!m_project->open(projectFileName, &errorString)) {
+            QMessageBox::warning(this, tr("Warning"), errorString);
+        }
+
+        qApp->quit();
+    }
 
     updateWindowTitle();
     updateEnableState();
+    updateSaveChangesTimer();
 }
 
 MainWindow::~MainWindow()
@@ -92,18 +117,13 @@ void MainWindow::loadSettings()
     restoreState(settings.value(SettingsMainWindowState, saveState()).toByteArray());
     m_taskView->header()->restoreState(settings.value(SettingsTaskViewHeaderState, m_taskView->header()->saveState()).toByteArray());
     m_taskView->hideCompletedAction()->setChecked(settings.value(SettingsTaskViewHideCompleted, m_taskView->hideCompletedAction()->isChecked()).toBool());
-}
 
-void MainWindow::trySaveProjectOnExit()
-{
-    G_SETTINGS_INIT();
-
-    if (m_project->hasChanges()
-            && settings.value(SettingsSaveChangesOnExit, true).toBool()) {
-        QString errorString;
-        if (!m_project->save(&errorString)) {
-            QMessageBox::warning(this, tr("Warning"), errorString);
-        }
+    // set default sound on first run
+    if (!settings.contains(SettingsWorkingFinishedSoundFile)) {
+        settings.setValue(SettingsWorkingFinishedSoundFile, soundResFileName(DefaultNotifySound));
+    }
+    if (!settings.contains(SettingsRestingFinishedSoundFile)) {
+        settings.setValue(SettingsRestingFinishedSoundFile, soundResFileName(DefaultNotifySound));
     }
 }
 
@@ -141,6 +161,8 @@ void MainWindow::createProject()
             this, SLOT(project_stopAction_triggered()));
 
     connect(m_project, SIGNAL(openStateChanged()),
+            this, SLOT(updateWindowTitle()));
+    connect(m_project, SIGNAL(saveStateChanged()),
             this, SLOT(updateWindowTitle()));
     connect(m_project, SIGNAL(openStateChanged()),
             this, SLOT(updateEnableState()));
@@ -254,12 +276,20 @@ void MainWindow::createStatusBar()
     setStatusBar(m_statusBar);
 }
 
+void MainWindow::createSaveChangesTimer()
+{
+    m_saveChangesTimer = new QTimer(this);
+    m_saveChangesTimer->setSingleShot(false);
+    connect(m_saveChangesTimer, SIGNAL(timeout()),
+            this, SLOT(trySaveProjectOnPeriodically()));
+}
+
 void MainWindow::quitAction_triggered()
 {
     G_SETTINGS_INIT();
 
     if (m_project->hasChanges()
-            && settings.value(SettingsSaveChangesOnExit, true).toBool()) {
+            && settings.value(SettingsSaveChangesOnExit, DefaultSettingsSavingChangesOnExit).toBool()) {
         QString errorString;
         if (!m_project->save(&errorString)) {
             QMessageBox::warning(this, tr("Warning"), errorString);
@@ -295,17 +325,27 @@ void MainWindow::settingsAction_triggered()
     G_SETTINGS_INIT();
 
     SettingsDialog dialog(this);
-    dialog.setPlayWorkingFinishSound(settings.value(SettingsPlayWorkingFinishSound, true).toBool());
-    dialog.setPlayRestingFinishSound(settings.value(SettingsPlayRestingFinishSound, true).toBool());
-    dialog.setShowWorkingFinishedTrayNotify(settings.value(SettingsShowWorkingFinishTrayNotify, true).toBool());
-    dialog.setShowRestingFinishedTrayNotify(settings.value(SettingsShowRestingFinishTrayNotify, true).toBool());
-    dialog.setSaveChangesOnExit(settings.value(SettingsSaveChangesOnExit, true).toBool());
+    dialog.setSaveChangesOnExit(settings.value(SettingsSaveChangesOnExit, DefaultSettingsSavingChangesOnExit).toBool());
+    dialog.setSaveChangesPeriodically(settings.value(SettingsSaveChangesPeriodically, DefaultSettingsSavingChangesPeriodically).toBool());
+    dialog.setSaveChangesInterval(settings.value(SettingsSaveChangesInterval, DefaultSettingsSaveChangesInterval).toInt());
+    dialog.setShowWorkingFinishedTrayNotify(settings.value(SettingsShowWorkingFinishTrayNotify, DefaultSettingsShowWorkingFinishTrayNotify).toBool());
+    dialog.setShowRestingFinishedTrayNotify(settings.value(SettingsShowRestingFinishTrayNotify, DefaultSettingsShowRestingFinishTrayNotify).toBool());
+    dialog.setWorkingFinishedSound(settings.value(SettingsWorkingFinishedSoundFile).toString());
+    dialog.setRestingFinishedSound(settings.value(SettingsRestingFinishedSoundFile).toString());
+    dialog.setPlayWorkingFinishedSound(settings.value(SettingsPlayWorkingFinishedSound, DefaultSettingsPlayWorkingFinishedSound).toBool());
+    dialog.setPlayRestingFinishedSound(settings.value(SettingsPlayRestingFinishedSound, DefaultSettingsPlayRestingFinishedSound).toBool());
     if (dialog.exec() == QDialog::Accepted) {
-        settings.setValue(SettingsPlayWorkingFinishSound, dialog.isPlayWorkingFinishSound());
-        settings.setValue(SettingsPlayRestingFinishSound, dialog.isPlayRestingFinishSound());
+        settings.setValue(SettingsSaveChangesOnExit, dialog.isSaveChangesOnExit());
+        settings.setValue(SettingsSaveChangesPeriodically, dialog.isSaveChangesPeriodically());
+        settings.setValue(SettingsSaveChangesInterval, dialog.saveChangesInterval());
         settings.setValue(SettingsShowWorkingFinishTrayNotify, dialog.isShowWorkingFinishedTrayNotify());
         settings.setValue(SettingsShowRestingFinishTrayNotify, dialog.isShowRestingFinishedTrayNotify());
-        settings.setValue(SettingsSaveChangesOnExit, dialog.isSaveChangesOnExit());
+        settings.setValue(SettingsWorkingFinishedSoundFile, dialog.workingFinishedSound());
+        settings.setValue(SettingsRestingFinishedSoundFile, dialog.restingFinishedSound());
+        settings.setValue(SettingsPlayWorkingFinishedSound, dialog.playWorkingFinishedSound());
+        settings.setValue(SettingsPlayRestingFinishedSound, dialog.playRestingFinishedSound());
+
+        updateSaveChangesTimer();
     }
 }
 
@@ -479,25 +519,34 @@ void MainWindow::tomatoStateChanged(Tomato::State state)
 {
     G_SETTINGS_INIT();
 
-    bool playWorkingSound = settings.value(SettingsPlayWorkingFinishSound, true).toBool();
-    bool playRestingSound = settings.value(SettingsPlayRestingFinishSound, true).toBool();
+    bool playWorkingFinishedSound = settings.value(SettingsPlayWorkingFinishedSound, DefaultSettingsPlayWorkingFinishedSound).toBool();
+    bool playRestingFinishedSound = settings.value(SettingsPlayRestingFinishedSound, DefaultSettingsPlayRestingFinishedSound).toBool();
 
-    bool showWorkingTrayNotify = settings.value(SettingsShowWorkingFinishTrayNotify, true).toBool();
-    bool showRestingTrayNotify = settings.value(SettingsShowRestingFinishTrayNotify, true).toBool();
+    QString workingFinishedSound = settings.value(SettingsWorkingFinishedSoundFile).toString();
+    QString restingFinishedSound = settings.value(SettingsRestingFinishedSoundFile).toString();
 
-    if ((playWorkingSound && state == Tomato::OverWorking)
-            || (playRestingSound && state == Tomato::OverResting)) {
-        Phonon::MediaObject *notify = Phonon::createPlayer(Phonon::NotificationCategory);
-        notify->setCurrentSource(QUrl::fromLocalFile(soundResFileName("notify.wav")));
-        notify->play();
-        connect(notify, SIGNAL(finished()), notify, SLOT(deleteLater()));
+    bool showWorkingTrayNotify = settings.value(SettingsShowWorkingFinishTrayNotify, DefaultSettingsShowWorkingFinishTrayNotify).toBool();
+    bool showRestingTrayNotify = settings.value(SettingsShowRestingFinishTrayNotify, DefaultSettingsShowRestingFinishTrayNotify).toBool();
+
+    if (state == Tomato::OverWorking
+            && playWorkingFinishedSound
+            && !workingFinishedSound.isEmpty()) {
+        playSound(workingFinishedSound);
     }
 
-    if (showWorkingTrayNotify && state == Tomato::OverWorking) {
+    if (state == Tomato::OverResting
+            && playRestingFinishedSound
+            && !restingFinishedSound.isEmpty()) {
+        playSound(restingFinishedSound);
+    }
+
+    if (state == Tomato::OverWorking
+            && showWorkingTrayNotify) {
         m_trayIcon->showWorkingTimeoutMessage();
     }
 
-    if (showRestingTrayNotify && state == Tomato::OverResting) {
+    if (state == Tomato::OverResting
+            && showRestingTrayNotify) {
         m_trayIcon->showRestingTimeoutMessage();
     }
 }
@@ -505,7 +554,14 @@ void MainWindow::tomatoStateChanged(Tomato::State state)
 void MainWindow::updateWindowTitle()
 {
     if (m_project->isOpen()) {
-        setWindowTitle(QString("%1 - %2").arg(m_project->fileName(), appShortName()));
+        if (m_project->hasChanges()) {
+            setWindowTitle(QString("%1* - %2").arg(m_project->fileName(),
+                                                  appShortName()));
+        }
+        else {
+            setWindowTitle(QString("%1 - %2").arg(m_project->fileName(),
+                                                  appShortName()));
+        }
     }
     else {
         setWindowTitle(appName());
@@ -515,6 +571,45 @@ void MainWindow::updateWindowTitle()
 void MainWindow::updateEnableState()
 {
     centralWidget()->setEnabled(m_project->isOpen());
+}
+
+void MainWindow::updateSaveChangesTimer()
+{
+    G_SETTINGS_INIT();
+
+    const bool isEnabled = settings.value(SettingsSaveChangesPeriodically, DefaultSettingsSavingChangesPeriodically).toBool();
+    const int interval = settings.value(SettingsSaveChangesInterval, DefaultSettingsSaveChangesInterval).toInt();
+
+    if (isEnabled) {
+        m_saveChangesTimer->setInterval(60000 * interval); // 1m = 60s * 1000ms
+        m_saveChangesTimer->start();
+    }
+    else {
+        m_saveChangesTimer->stop();
+    }
+}
+
+void MainWindow::trySaveProjectOnExit()
+{
+    G_SETTINGS_INIT();
+
+    if (m_project->hasChanges()
+            && settings.value(SettingsSaveChangesOnExit, DefaultSettingsSavingChangesOnExit).toBool()) {
+        QString errorString;
+        if (!m_project->save(&errorString)) {
+            QMessageBox::warning(this, tr("Warning"), errorString);
+        }
+    }
+}
+
+void MainWindow::trySaveProjectOnPeriodically()
+{
+    if (m_project->hasChanges()) {
+        QString errorString;
+        if (!m_project->save(&errorString)) {
+            QMessageBox::warning(this, tr("Warning"), errorString);
+        }
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *closeEvent)
