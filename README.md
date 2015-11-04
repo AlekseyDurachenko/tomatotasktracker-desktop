@@ -20,7 +20,7 @@ Build && install
 
 ```bash
 lrelease tomatotasktracker-desktop.pro
-qmake "DEFINES+=APP_RESOURCE_PREFIX='/usr/share/tomatotasktracker-desktop'"
+qmake
 make
 make install
 ```

@@ -63,6 +63,8 @@ debug:UI_DIR        = build/debug/ui
 # resource prefix. example: /usr/share/tomatotasktracker-desktop
 # if resource prefix not exists, portable mode resources will be used
 #DEFINES += "APP_RESOURCE_PREFIX='/usr/share/tomatotasktracker-desktop'"
+app_res_pref = $$find(DEFINES, "APP_RESOURCE_PREFIX=")
+count(app_res_pref,  0):DEFINES += "APP_RESOURCE_PREFIX='/usr/share/$$TARGET'"
 
 
 # uncomment this line if you want deploy the application
