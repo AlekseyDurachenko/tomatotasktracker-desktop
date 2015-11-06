@@ -64,7 +64,7 @@ QVariant TaskItemModel::data(const QModelIndex &index, int role) const
     }
 
     const Task *task = static_cast<Task *>(index.internalPointer());
-    const bool isActiveTask = m_tomato->findActiveSubtask(task->id());
+    const bool isActiveTask = m_tomato->isTaskTreeActive(task->id());
     const qint64 totalTime = m_tomato->calcTaskTime(task->id());
 
     if (role == Qt::DisplayRole || role == Qt::ToolTipRole) {

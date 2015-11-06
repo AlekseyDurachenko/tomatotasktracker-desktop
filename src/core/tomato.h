@@ -54,7 +54,7 @@ public:
     inline bool hasActiveTask() const;
     inline bool isActiveTask(int taskId) const;
     inline int activeTaskId() const;
-    bool findActiveSubtask(int taskId) const;
+    bool isTaskTreeActive(int taskId) const;
     void setActiveTask(int taskId);
     void unsetActiveTask();
     TaskTime calcActiveTaskTime() const;
@@ -85,22 +85,18 @@ signals:
 
     void aboutToBeTaskInserted(Task *parent, int first, int last);
     void taskInserted(Task *parent, int first, int last);
+
     void aboutToBeTaskRemoved(Task *parent, int first, int last);
     void taskRemoved(Task *parent, int first, int last);
+
     void aboutToBeTaskDataChanged(Task *parent, int first, int last);
     void taskDataChanged(Task *parent, int first, int last);
+
     void aboutToBeTaskDisplayChanged(Task *parent, int first, int last);
     void taskDisplayChanged(Task *parent, int first, int last);
-    void aboutToBeTaskMoved(Task *sourceParent,
-                            int sourceFirst,
-                            int sourceLast,
-                            Task *destinationParent,
-                            int destinationIndex);
-    void taskMoved(Task *sourceParent,
-                   int sourceFirst,
-                   int sourceLast,
-                   Task *destinationParent,
-                   int destinationIndex);
+
+    void aboutToBeTaskMoved(Task *srcParent, int srcFirst, int srcLast, Task *destParent, int destIndex);
+    void taskMoved(Task *srcParent, int srcFirst, int srcLast, Task *destParent, int destIndex);
 
     void aboutToBeReseted();
     void reseted();

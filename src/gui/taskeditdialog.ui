@@ -90,14 +90,14 @@
        <item row="1" column="1">
         <widget class="QCheckBox" name="useTimeLimit_checkBox">
          <property name="text">
-          <string>use limit time</string>
+          <string>set time limit to the task</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
         <widget class="QCheckBox" name="completed_checkBox">
          <property name="text">
-          <string>completed</string>
+          <string>task is completed</string>
          </property>
         </widget>
        </item>

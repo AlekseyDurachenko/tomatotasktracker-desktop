@@ -32,7 +32,7 @@ const char *attrEndTime     = "endtime";
 const char *attrTitle       = "title";
 const char *attrDesc        = "desc";
 const char *attrTimeLimit   = "timelimit";
-const char *attrIsDone      = "isdone";
+const char *attrIsDone      = "completed";
 
 
 static QDomElement createSettingsElem(QDomDocument doc, const Tomato *tomato)

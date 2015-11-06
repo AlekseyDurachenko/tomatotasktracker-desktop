@@ -38,7 +38,7 @@ bool TaskFilterProxyModel::filterAcceptsRow(
 {
     const Task *task = static_cast<Task *>(sourceModel()->index(sourceRow, 0, sourceParent).internalPointer());
     if (m_enabled) {
-        return ((!task->data().isCompleted()) || m_tomato->findActiveSubtask(task->id()));
+        return ((!task->data().isCompleted()) || m_tomato->isTaskTreeActive(task->id()));
     }
 
     return true;

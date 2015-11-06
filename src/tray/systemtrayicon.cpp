@@ -71,9 +71,7 @@ void SystemTrayIcon::updateTrayText()
     else {
         switch (m_project->tomato()->state()) {
         case Tomato::Idle:
-            text = QString("%1: %2")
-                   .arg(Tomato::stateName(m_project->tomato()->state()))
-                   .arg(secsToTimeStr(m_project->tomato()->workingTime()));
+            text = Tomato::stateName(m_project->tomato()->state());
             break;
         case Tomato::Working:
             text = QString("%1: %2")

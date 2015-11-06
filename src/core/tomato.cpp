@@ -19,29 +19,28 @@
 #include <QStack>
 
 
-static QList<Task *> findTaskRecursive(Task *root)
+static QList<Task *> taskTreeToList(Task *root)
 {
     QList<Task *> result = QList<Task *>() << root;
     for (int i = 0; i < root->children().count(); ++i)
-        result << findTaskRecursive(root->children().at(i));
+        result << taskTreeToList(root->children().at(i));
 
     return result;
 }
 
-static bool findActiveSubtask(const Task *task, const Task *activeTask)
+static bool isTaskTreeActive(const Task *task, const Task *activeTask)
 {
-    if (task == activeTask) {
+    if (task == activeTask)
         return true;
-    }
 
     for (int i = 0; i < task->children().count(); ++i)
-        if (findActiveSubtask(task->children().at(i), activeTask))
+        if (isTaskTreeActive(task->children().at(i), activeTask))
             return true;
 
     return false;
 }
 
-static bool findTaskParentInList(Task *task, const QList<Task *> &list)
+static bool isTaskParentInList(Task *task, const QList<Task *> &list)
 {
     while (task && task->parent()) {
         if (list.contains(task->parent()))
@@ -54,7 +53,8 @@ static bool findTaskParentInList(Task *task, const QList<Task *> &list)
 }
 
 
-Tomato::Tomato(QObject *parent) : QObject(parent)
+Tomato::Tomato(QObject *parent)
+    : QObject(parent)
 {
     m_rootTask = createTask(TaskData(), 0);
     m_activeTask = 0;
@@ -139,16 +139,16 @@ qint64 Tomato::calcTaskTime(int id) const
 {
     const Task *task = findTask(id);
     qint64 total = task->totalTime();
-    if ((m_state == Working || m_state == OverWorking) && findActiveSubtask(task->id())) {
+    if ((m_state == Working || m_state == OverWorking) && isTaskTreeActive(task->id())) {
         total += timestamp() - m_activeTaskStartTime;
     }
 
     return total;
 }
 
-bool Tomato::findActiveSubtask(int taskId) const
+bool Tomato::isTaskTreeActive(int taskId) const
 {
-    return ::findActiveSubtask(findTask(taskId), m_activeTask);
+    return ::isTaskTreeActive(findTask(taskId), m_activeTask);
 }
 
 void Tomato::setActiveTask(int taskId)
@@ -300,7 +300,7 @@ void Tomato::removeTasks(const QList<int> taskIds)
         bool removed = false;
 
         for (int i = 0; i < uniqueTasks.count(); ++i) {
-            if (findTaskParentInList(uniqueTasks[i], uniqueTasks)) {
+            if (isTaskParentInList(uniqueTasks[i], uniqueTasks)) {
                 uniqueTasks.removeAt(i);
                 removed = true;
                 break;
@@ -363,7 +363,7 @@ bool Tomato::moveTask(int taskId, int destParentTaskId, int destIndex)
     }
 
     // task is parent of destParent
-    if (findTaskRecursive(task).contains(destParent)) {
+    if (taskTreeToList(task).contains(destParent)) {
         return false;
     }
 
@@ -426,7 +426,7 @@ bool Tomato::taskCanBeMoved(int taskId, int destParentTaskId)
     }
 
     // task is parent of destParent
-    if (findTaskRecursive(task).contains(destParent)) {
+    if (taskTreeToList(task).contains(destParent)) {
         return false;
     }
 

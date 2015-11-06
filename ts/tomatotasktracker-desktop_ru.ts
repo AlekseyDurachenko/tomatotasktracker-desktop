@@ -61,110 +61,110 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="79"/>
-        <location filename="../src/gui/mainwindow.cpp" line="133"/>
-        <location filename="../src/gui/mainwindow.cpp" line="290"/>
-        <location filename="../src/gui/mainwindow.cpp" line="309"/>
-        <location filename="../src/gui/mainwindow.cpp" line="379"/>
-        <location filename="../src/gui/mainwindow.cpp" line="402"/>
-        <location filename="../src/gui/mainwindow.cpp" line="413"/>
-        <location filename="../src/gui/mainwindow.cpp" line="438"/>
-        <location filename="../src/gui/mainwindow.cpp" line="464"/>
-        <location filename="../src/gui/mainwindow.cpp" line="595"/>
-        <location filename="../src/gui/mainwindow.cpp" line="605"/>
+        <location filename="../src/gui/mainwindow.cpp" line="84"/>
+        <location filename="../src/gui/mainwindow.cpp" line="138"/>
+        <location filename="../src/gui/mainwindow.cpp" line="295"/>
+        <location filename="../src/gui/mainwindow.cpp" line="314"/>
+        <location filename="../src/gui/mainwindow.cpp" line="384"/>
+        <location filename="../src/gui/mainwindow.cpp" line="407"/>
+        <location filename="../src/gui/mainwindow.cpp" line="418"/>
+        <location filename="../src/gui/mainwindow.cpp" line="443"/>
+        <location filename="../src/gui/mainwindow.cpp" line="469"/>
+        <location filename="../src/gui/mainwindow.cpp" line="600"/>
+        <location filename="../src/gui/mainwindow.cpp" line="610"/>
         <source>Warning</source>
         <translation>Предупреждение</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="172"/>
+        <location filename="../src/gui/mainwindow.cpp" line="177"/>
         <source>&amp;Quit...</source>
         <translation>&amp;Выход...</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="178"/>
+        <location filename="../src/gui/mainwindow.cpp" line="183"/>
         <source>&amp;Settings...</source>
         <translation>&amp;Настройки...</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="184"/>
+        <location filename="../src/gui/mainwindow.cpp" line="189"/>
         <source>&amp;About...</source>
         <translation>&amp;О программе...</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="190"/>
+        <location filename="../src/gui/mainwindow.cpp" line="195"/>
         <source>About &amp;Qt...</source>
         <translation>О &amp;Qt...</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="225"/>
+        <location filename="../src/gui/mainwindow.cpp" line="230"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="236"/>
+        <location filename="../src/gui/mainwindow.cpp" line="241"/>
         <source>&amp;State</source>
         <translation>&amp;Состояние</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="240"/>
+        <location filename="../src/gui/mainwindow.cpp" line="245"/>
         <source>&amp;Task</source>
         <translation>&amp;Задача</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="253"/>
+        <location filename="../src/gui/mainwindow.cpp" line="258"/>
         <source>T&amp;ools</source>
         <translation>&amp;Инструменты</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="370"/>
+        <location filename="../src/gui/mainwindow.cpp" line="375"/>
         <source>Create project</source>
         <translation>Создание проекта</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="372"/>
-        <location filename="../src/gui/mainwindow.cpp" line="395"/>
-        <location filename="../src/gui/mainwindow.cpp" line="431"/>
+        <location filename="../src/gui/mainwindow.cpp" line="377"/>
+        <location filename="../src/gui/mainwindow.cpp" line="400"/>
+        <location filename="../src/gui/mainwindow.cpp" line="436"/>
         <source>Project files (*.ttt)</source>
         <translation>Файлы проекта (*.ttt)</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="392"/>
+        <location filename="../src/gui/mainwindow.cpp" line="397"/>
         <source>Open project</source>
         <translation>Открыть проект</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="429"/>
+        <location filename="../src/gui/mainwindow.cpp" line="434"/>
         <source>Save project as</source>
         <translation>Сохранить проект как</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="256"/>
+        <location filename="../src/gui/mainwindow.cpp" line="261"/>
         <source>&amp;Help</source>
         <translation>&amp;Помощь</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="71"/>
+        <location filename="../src/gui/mainwindow.cpp" line="76"/>
         <source>Usage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="72"/>
+        <location filename="../src/gui/mainwindow.cpp" line="77"/>
         <source>Usage: %1 &lt;filename&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="297"/>
-        <location filename="../src/gui/mainwindow.cpp" line="451"/>
+        <location filename="../src/gui/mainwindow.cpp" line="302"/>
+        <location filename="../src/gui/mainwindow.cpp" line="456"/>
         <source>Question</source>
         <translation>Вопрос</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="298"/>
+        <location filename="../src/gui/mainwindow.cpp" line="303"/>
         <source>The project has been changed. Do you want to save it before exiting?</source>
         <translation>Проект был изменен. Вы хотите сохранить изменения перед выходом?</translation>
     </message>
     <message>
-        <location filename="../src/gui/mainwindow.cpp" line="452"/>
+        <location filename="../src/gui/mainwindow.cpp" line="457"/>
         <source>The project has been changed. Do you want to save it before closing?</source>
         <translation>Проект был изменен. Вы хотите сохранинть изменения перед закрытием?</translation>
     </message>
@@ -172,48 +172,48 @@
 <context>
     <name>Project</name>
     <message>
-        <location filename="../src/core/project.cpp" line="185"/>
-        <location filename="../src/core/project.cpp" line="196"/>
+        <location filename="../src/core/project.cpp" line="187"/>
+        <location filename="../src/core/project.cpp" line="198"/>
         <source>&amp;Start working</source>
         <translation>&amp;Начать работать</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="190"/>
+        <location filename="../src/core/project.cpp" line="192"/>
         <source>&amp;Start resting</source>
         <translation>&amp;Начать отдыхать</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="205"/>
+        <location filename="../src/core/project.cpp" line="221"/>
         <source>&amp;New...</source>
         <translation>&amp;Новый...</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="209"/>
+        <location filename="../src/core/project.cpp" line="225"/>
         <source>&amp;Open...</source>
         <translation>&amp;Открыть...</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="213"/>
+        <location filename="../src/core/project.cpp" line="229"/>
         <source>&amp;Save...</source>
         <translation>&amp;Сохранить...</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="217"/>
+        <location filename="../src/core/project.cpp" line="233"/>
         <source>Save &amp;as...</source>
         <translation>Сохранить &amp;как...</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="221"/>
+        <location filename="../src/core/project.cpp" line="237"/>
         <source>Close...</source>
         <translation>Закрыть...</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="225"/>
+        <location filename="../src/core/project.cpp" line="241"/>
         <source>&amp;Properties...</source>
         <translation>&amp;Свойства...</translation>
     </message>
     <message>
-        <location filename="../src/core/project.cpp" line="231"/>
+        <location filename="../src/core/project.cpp" line="247"/>
         <source>Sto&amp;p</source>
         <translation>&amp;Остановить</translation>
     </message>
@@ -329,14 +329,6 @@
 <context>
     <name>SystemTrayIcon</name>
     <message>
-        <source>The work time is over</source>
-        <translation type="obsolete">Рабочее время окончено</translation>
-    </message>
-    <message>
-        <source>The rest time is over</source>
-        <translation type="obsolete">Время отдыха окончено</translation>
-    </message>
-    <message>
         <location filename="../src/gui/systemtrayicon.cpp" line="54"/>
         <source>It&apos;s time to rest</source>
         <translation>Пришло время отдохнуть</translation>
@@ -386,13 +378,13 @@
     </message>
     <message>
         <location filename="../src/gui/taskeditdialog.ui" line="93"/>
-        <source>use limit time</source>
-        <translation>установить лимит времени</translation>
+        <source>set time limit to the task</source>
+        <translation>задать ограничение по времени для задачи</translation>
     </message>
     <message>
         <location filename="../src/gui/taskeditdialog.ui" line="100"/>
-        <source>completed</source>
-        <translation>завешено</translation>
+        <source>task is completed</source>
+        <translation>задача выполнена</translation>
     </message>
     <message>
         <location filename="../src/gui/taskeditdialog.ui" line="108"/>
@@ -610,7 +602,7 @@
     <message>
         <location filename="../src/core/tomato.cpp" line="442"/>
         <source>WORKING</source>
-        <translation>РАБОТА</translation>
+        <translation>РАБОТАЕМ</translation>
     </message>
     <message>
         <location filename="../src/core/tomato.cpp" line="444"/>
@@ -623,17 +615,9 @@
         <translation>ВРЕМЯ ПОРАБОТАТЬ</translation>
     </message>
     <message>
-        <source>TIME FOR RESTING</source>
-        <translation type="obsolete">ВРЕМЯ ДЛЯ ОТДЫХА</translation>
-    </message>
-    <message>
-        <source>TIME FOR WORKING</source>
-        <translation type="obsolete">ВРЕМЯ ДЛЯ РАБОТЫ</translation>
-    </message>
-    <message>
         <location filename="../src/core/tomato.cpp" line="446"/>
         <source>RESTING</source>
-        <translation>ОТДЫХ</translation>
+        <translation>ОТДЫХАЕМ</translation>
     </message>
 </context>
 </TS>

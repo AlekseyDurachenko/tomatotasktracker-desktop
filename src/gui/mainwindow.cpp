@@ -614,6 +614,14 @@ void MainWindow::trySaveProjectOnPeriodically()
 
 void MainWindow::closeEvent(QCloseEvent *closeEvent)
 {
-    hide();
-    closeEvent->ignore();
+    // if we ignore all close events, the window manager
+    // will be aborted on closing the application window
+    if (!closeEvent->spontaneous()) {
+
+        closeEvent->accept();
+    }
+    else {
+        hide();
+        closeEvent->ignore();
+    }
 }

@@ -1,8 +1,16 @@
 [Desktop Entry]
-Type=Application
-Name=Tomato task tracker
+Name=Tomato Task Tracker
+Name[ru]=Помидорный трекер задач
+
+GenericName=Tomato Task Tracker
+GenericName[ru]=Помидорный трекер задач
+
+Comment=Your simple task tracker with added Pomodoro technique
+Comment[ru]=Ваш простой трекер задач дополненный методом "Помидор"
+
+Exec=tomatotasktracker-desktop %f
 Icon=tomatotasktracker-desktop
-TryExec=tomatotasktracker-desktop
-Exec=tomatotasktracker-desktop %F
 Terminal=false
-Categories=Qt;Office;
+Type=Application
+Categories=Office;Qt;
+Keywords=task;todo;reminder

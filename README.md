@@ -1,8 +1,18 @@
 TomatoTaskTracker-Desktop
 =========================
 
-The simple task tracker with the pomodoro technique.
+Tomato Task Tracker is your simple task tracker with added Pomodoro technique
 
+
+Build && Install
+----------------
+
+```bash
+lrelease tomatotasktracker-desktop.pro
+qmake
+make
+make install
+```
 
 Build linux portable version
 ----------------------------
@@ -12,15 +22,4 @@ lrelease tomatotasktracker-desktop.pro
 qmake "DEFINES += APP_PORTABLE"
 make
 make INSTALL_ROOT=`pwd`/portable-build install
-```
-
-
-Build && install
-----------------
-
-```bash
-lrelease tomatotasktracker-desktop.pro
-qmake
-make
-make install
 ```
