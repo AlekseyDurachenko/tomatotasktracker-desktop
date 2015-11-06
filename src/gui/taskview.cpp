@@ -55,7 +55,7 @@ TaskView::TaskView(Project *project, QWidget *parent)
 void TaskView::createActions()
 {
     m_activateAction = new QAction(this);
-    m_activateAction->setText(tr("Act&ivate..."));
+    m_activateAction->setText(tr("Act&ivate"));
     connect(m_activateAction, SIGNAL(triggered(bool)),
             this, SLOT(activateAction_triggered()));
 

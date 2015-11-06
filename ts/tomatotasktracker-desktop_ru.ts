@@ -329,12 +329,12 @@
 <context>
     <name>SystemTrayIcon</name>
     <message>
-        <location filename="../src/gui/systemtrayicon.cpp" line="54"/>
+        <location filename="../src/tray/systemtrayicon.cpp" line="54"/>
         <source>It&apos;s time to rest</source>
         <translation>Пришло время отдохнуть</translation>
     </message>
     <message>
-        <location filename="../src/gui/systemtrayicon.cpp" line="61"/>
+        <location filename="../src/tray/systemtrayicon.cpp" line="61"/>
         <source>It&apos;s time to work</source>
         <translation>Пришло время поработать</translation>
     </message>
@@ -479,12 +479,12 @@
 <context>
     <name>TaskItemModel</name>
     <message>
-        <location filename="../src/gui/taskitemmodel.cpp" line="148"/>
+        <location filename="../src/core/taskitemmodel.cpp" line="148"/>
         <source>Title</source>
         <translation>Заголовок</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskitemmodel.cpp" line="150"/>
+        <location filename="../src/core/taskitemmodel.cpp" line="150"/>
         <source>Time</source>
         <translation>Время</translation>
     </message>
@@ -527,8 +527,8 @@
     <name>TaskView</name>
     <message>
         <location filename="../src/gui/taskview.cpp" line="58"/>
-        <source>Act&amp;ivate...</source>
-        <translation>&amp;Активировать...</translation>
+        <source>Act&amp;ivate</source>
+        <translation>Сделать &amp;активной</translation>
     </message>
     <message>
         <location filename="../src/gui/taskview.cpp" line="63"/>
