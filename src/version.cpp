@@ -36,7 +36,7 @@
 #endif
 
 #ifndef APP_VERSION
-    #define APP_VERSION "v" STR(APP_MAJOR) "." STR(APP_MINOR) "." STR(APP_PATCH)
+    #define APP_VERSION STR(APP_MAJOR) "." STR(APP_MINOR) "." STR(APP_PATCH)
 #endif
 
 

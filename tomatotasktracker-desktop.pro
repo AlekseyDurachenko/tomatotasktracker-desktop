@@ -63,9 +63,9 @@ DEFINES += "APP_PATCH=$${APP_PATCH}"
 # if you want specify the source code link you can use:
 # qmake "DEFINES += APP_SOURCES='https://github.com/path/to/project'"
 # if you want specify application version you can use:
-# qmake "DEFINES += APP_VERSION='v0.1.0-5-g27626de'"
+# qmake "DEFINES += APP_VERSION='0.1.0-5-g27626de'"
 TMP_APP_VERSION = $$find(DEFINES, "APP_VERSION=")
-count(TMP_APP_VERSION,  0):DEFINES += "APP_VERSION='v$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}'"
+count(TMP_APP_VERSION,  0):DEFINES += "APP_VERSION='$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}'"
 
 
 # uncomment this line if you want to build the test
