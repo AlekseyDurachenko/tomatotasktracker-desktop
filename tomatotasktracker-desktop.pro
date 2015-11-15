@@ -83,10 +83,8 @@ count(TMP_APP_VERSION,  0):DEFINES += "APP_VERSION='$${APP_MAJOR}.$${APP_MINOR}.
 #DEFINES += APP_DEPLOY
 
 
-# for custom resource prefix use:
-# qmake "DEFINES += APP_RESOURCE_PREFIX='/usr/share/tomatotasktracker-desktop'"
-TMP_APP_RESOURCE_PREFIX = $$find(DEFINES, "APP_RESOURCE_PREFIX=")
-count(TMP_APP_RESOURCE_PREFIX,  0):DEFINES += "APP_RESOURCE_PREFIX='/usr/share/$$TARGET'"
+# resource path
+DEFINES += "APP_RESOURCE_PREFIX='/usr/share/$$TARGET'"
 
 
 # release build options
