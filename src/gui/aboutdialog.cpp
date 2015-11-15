@@ -26,7 +26,49 @@ AboutDialog::AboutDialog(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("About %1").arg(appShortName()));
 
-    ui->programmTitle_label->setText(QString("%1 - %2").arg(appShortName(), appVersion()));
+    // application name font
+    QFont appNameFont = font();
+    appNameFont.setPixelSize(20);
+    appNameFont.setBold(true);
+
+    // normal text font
+    QFont appInfoFont = font();
+    appInfoFont.setPixelSize(14);
+
+    // set application name
+    ui->programmTitle_label->setFont(appNameFont);
+    ui->programmTitle_label->setText(appName());
+
+    // application version
+    QLabel *versionLabel = new QLabel(this);
+    versionLabel->setFont(appInfoFont);
+#ifdef APP_REVISION
+    versionLabel->setText(tr("<b>Version:</b> %1 (rev: %2)")
+                          .arg(appVersion(), appRevision()));
+#else
+    versionLabel->setText(tr("<b>Version:</b> %1").arg(appVersion()));
+#endif
+    ui->headLayout->addWidget(versionLabel);
+
+    // application build number
+#ifdef APP_BUILD_NUMBER
+    QLabel *buildNumberLabel = new QLabel(this);
+    buildNumberLabel->setFont(appInfoFont);
+    buildNumberLabel->setText(tr("<b>Build number:</b> %1").arg(appBuildNumber()));
+    ui->headLayout->addWidget(buildNumberLabel);
+#endif
+
+    // application build date
+#ifdef APP_BUILD_DATE
+    QLabel *buildDateLabel = new QLabel(this);
+    buildDateLabel->setFont(appInfoFont);
+    buildDateLabel->setText(tr("<b>Build date:</b> %1").arg(appBuildDate()));
+    ui->headLayout->addWidget(buildDateLabel);
+#endif
+
+    ui->headLayout->addItem(new QSpacerItem(1, 1,
+                                            QSizePolicy::Expanding,
+                                            QSizePolicy::Expanding));
 
     ui->about_plainTextEdit->setPlainText(fromFile("ABOUT"));
     ui->authors_plainTextEdit->setPlainText(fromFile("AUTHORS"));

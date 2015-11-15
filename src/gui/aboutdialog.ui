@@ -42,25 +42,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="programmTitle_label">
-       <property name="font">
-        <font>
-         <pointsize>22</pointsize>
-         <weight>50</weight>
-         <italic>false</italic>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>application name</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::RichText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="headLayout">
+       <item>
+        <widget class="QLabel" name="programmTitle_label">
+         <property name="text">
+          <string>application name</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>

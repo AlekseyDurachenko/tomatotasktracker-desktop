@@ -18,6 +18,11 @@
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
 
+
+#ifndef APP_NAME
+    #define APP_NAME "target"
+#endif
+
 #ifndef APP_MAJOR
     #define APP_MAJOR 0
 #endif
@@ -26,19 +31,42 @@
     #define APP_MINOR 0
 #endif
 
-#ifdef APP_REV
-    #ifdef APP_BUILD_NUMBER
-        #define APP_VERSION STR(APP_MAJOR) "." STR(APP_MINOR) "." STR(APP_PATCH) "." STR(APP_REV) "." STR(APP_BUILD_NUMBER)
-    #else
-        #define APP_VERSION STR(APP_MAJOR) "." STR(APP_MINOR) "." STR(APP_PATCH) "." STR(APP_REV)
-    #endif
-#else
-    #define APP_VERSION STR(APP_MAJOR) "." STR(APP_MINOR) "." STR(APP_PATCH)
+#ifndef APP_PATCH
+    #define APP_PATCH 0
 #endif
+
+#ifndef APP_VERSION
+    #define APP_VERSION "v" STR(APP_MAJOR) "." STR(APP_MINOR) "." STR(APP_PATCH)
+#endif
+
+
+const char *appName()
+{
+    return STR(APP_NAME);
+}
+
+const char *appShortName()
+{
+    return STR(APP_NAME);
+}
+
+const char *appFullName()
+{
+    return STR(APP_NAME);
+}
 
 const char *appVersion()
 {
-    return APP_VERSION;
+    return STR(APP_VERSION);
+}
+
+const char *appBuildNumber()
+{
+#ifdef APP_BUILD_NUMBER
+    return STR(APP_BUILD_NUMBER);
+#else
+    return "0";
+#endif
 }
 
 const char *appBuildDate()
@@ -46,25 +74,24 @@ const char *appBuildDate()
 #ifdef APP_BUILD_DATE
     return STR(APP_BUILD_DATE);
 #else
-    return 0;
+    return "0000-00-00T00:00:00+0000";
 #endif
 }
 
-const char *appName()
+const char *appRevision()
 {
-#ifdef APP_NAME
-    return STR(APP_NAME);
+#ifdef APP_REVISION
+    return STR(APP_REVISION);
 #else
-    return "tomatotasktracker-desktop";
+    return "0";
 #endif
 }
 
-const char *appShortName()
+const char *appSources()
 {
-    return appName(); // type here short name of the app
-}
-
-const char *appFullName()
-{
-    return appName(); // type here full name of the app
+#ifdef APP_SOURCES
+    return STR(APP_SOURCES);
+#else
+    return "http://ya.ru/";
+#endif
 }

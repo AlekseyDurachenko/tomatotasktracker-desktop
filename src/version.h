@@ -16,17 +16,16 @@
 #define VERSION_H
 
 
-// "{APP_MAJOR}.{APP_MINOR}.{APP_PATCH}[.{APP_REV}[.{APP_BUILD_NUMBER}]]"
-const char *appVersion();
-// "{APP_BUILD_DATE}"
-// if build number is not presented this function returns 0
-const char *appBuildDate();
-// the application name (often equal to the program name)
 const char *appName();
-// the short name of the application
 const char *appShortName();
-// the full name of the application
 const char *appFullName();
+
+const char *appVersion();
+
+const char *appBuildNumber();
+const char *appBuildDate();
+const char *appRevision();
+const char *appSources();
 
 
 #endif // VERSION_H
