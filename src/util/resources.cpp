@@ -23,11 +23,11 @@
 
 QString resourcesPath()
 {
-#if defined(APP_PORTABLE) || !defined(APP_RESOURCE_PREFIX)
+#if defined(APP_PORTABLE) || !defined(APP_RESOURCES_PREFIX)
     return QCoreApplication::applicationDirPath();
 #endif
 
-    return STR(APP_RESOURCE_PREFIX);
+    return STR(APP_RESOURCES_PREFIX);
 }
 
 QString docsPath()

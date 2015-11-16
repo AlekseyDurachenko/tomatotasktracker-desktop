@@ -48,6 +48,8 @@ else {
 # we use c++11 features
 QMAKE_CXXFLAGS += -std=c++11
 
+# resource path, please correct the installation rules if you edit this
+DEFINES += "APP_RESOURCES_PREFIX='/usr/share/$$TARGET'"
 
 # application version for using inside source code
 DEFINES += "APP_NAME=$${TARGET}"
@@ -81,10 +83,6 @@ count(TMP_APP_VERSION,  0):DEFINES += "APP_VERSION='$${APP_MAJOR}.$${APP_MINOR}.
 # uncomment this line if you want to deploy the application
 # or use: qmake "DEFINES += APP_DEPLOY"
 #DEFINES += APP_DEPLOY
-
-
-# resource path
-DEFINES += "APP_RESOURCE_PREFIX='/usr/share/$$TARGET'"
 
 
 # release build options
