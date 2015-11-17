@@ -25,9 +25,9 @@ QString resourcesPath()
 {
 #if defined(APP_PORTABLE) || !defined(APP_RESOURCES_PREFIX)
     return QCoreApplication::applicationDirPath();
-#endif
-
+#else
     return STR(APP_RESOURCES_PREFIX);
+#endif
 }
 
 QString docsPath()

@@ -14,13 +14,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 TEMPLATE        = app
 TARGET          = tomatotasktracker-desktop
-
-# write here your application version
-APP_MAJOR=0
-APP_MINOR=1
-APP_PATCH=1
-VERSION = "$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}"
-
+APP_MAJOR       = 0
+APP_MINOR       = 1
+APP_PATCH       = 1
+VERSION         = "$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}"
 CONFIG          += console debug_and_release
 QT              += core gui xml
 greaterThan(QT_MAJOR_VERSION, 4) {
@@ -45,17 +42,16 @@ else {
 }
 
 
-# we use c++11 features
+# enable c++11 features
 QMAKE_CXXFLAGS += -std=c++11
 
-# resource path, please correct the installation rules if you edit this
-DEFINES += "APP_RESOURCES_PREFIX='/usr/share/$$TARGET'"
 
 # application version for using inside source code
 DEFINES += "APP_NAME=$${TARGET}"
 DEFINES += "APP_MAJOR=$${APP_MAJOR}"
 DEFINES += "APP_MINOR=$${APP_MINOR}"
 DEFINES += "APP_PATCH=$${APP_PATCH}"
+
 # if you want specify the application build number you can use:
 # qmake "DEFINES += APP_BUILD_NUMBER=2"
 # if you want specify the application build date you can use:
@@ -66,8 +62,10 @@ DEFINES += "APP_PATCH=$${APP_PATCH}"
 # qmake "DEFINES += APP_SOURCES='https://github.com/path/to/project'"
 # if you want specify application version you can use:
 # qmake "DEFINES += APP_VERSION='0.1.0-5-g27626de'"
-TMP_APP_VERSION = $$find(DEFINES, "APP_VERSION=")
-count(TMP_APP_VERSION,  0):DEFINES += "APP_VERSION='$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}'"
+C = $$find(DEFINES, "APP_VERSION=")
+isEmpty(C) {
+    DEFINES += "APP_VERSION='$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}'"
+}
 
 
 # uncomment this line if you want to build the test
