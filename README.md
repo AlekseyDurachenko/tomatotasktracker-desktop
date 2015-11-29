@@ -4,6 +4,7 @@ TomatoTaskTracker-Desktop
 Tomato Task Tracker is your personal simple task tracker
 with added Pomodoro technique
 
+Homepage: http://alekseydurachenko.github.io/tomatotasktracker-desktop/
 
 Build && Install
 ----------------
