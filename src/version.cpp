@@ -92,6 +92,6 @@ const char *appSources()
 #ifdef APP_SOURCES
     return STR(APP_SOURCES);
 #else
-    return "http://ya.ru/";
+    return "";
 #endif
 }
