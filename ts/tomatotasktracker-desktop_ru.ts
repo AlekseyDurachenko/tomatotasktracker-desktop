@@ -5,32 +5,32 @@
     <name>AboutDialog</name>
     <message>
         <location filename="../src/gui/aboutdialog.ui" line="14"/>
-        <location filename="../src/gui/aboutdialog.ui" line="77"/>
+        <location filename="../src/gui/aboutdialog.ui" line="67"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/aboutdialog.ui" line="55"/>
+        <location filename="../src/gui/aboutdialog.ui" line="49"/>
         <source>application name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/aboutdialog.ui" line="87"/>
+        <location filename="../src/gui/aboutdialog.ui" line="77"/>
         <source>Authors</source>
         <translation>Авторы</translation>
     </message>
     <message>
-        <location filename="../src/gui/aboutdialog.ui" line="104"/>
+        <location filename="../src/gui/aboutdialog.ui" line="94"/>
         <source>Change log</source>
         <translation>История изменений</translation>
     </message>
     <message>
-        <location filename="../src/gui/aboutdialog.ui" line="114"/>
+        <location filename="../src/gui/aboutdialog.ui" line="104"/>
         <source>License</source>
         <translation>Лицензия</translation>
     </message>
     <message>
-        <location filename="../src/gui/aboutdialog.ui" line="131"/>
+        <location filename="../src/gui/aboutdialog.ui" line="121"/>
         <source>Libraries</source>
         <translation>Библиотеки</translation>
     </message>
@@ -40,7 +40,27 @@
         <translation>О %1</translation>
     </message>
     <message>
-        <location filename="../src/gui/aboutdialog.cpp" line="54"/>
+        <location filename="../src/gui/aboutdialog.cpp" line="46"/>
+        <source>&lt;b&gt;Version:&lt;/b&gt; %1 (rev: %2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/aboutdialog.cpp" line="49"/>
+        <source>&lt;b&gt;Version:&lt;/b&gt; %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/aboutdialog.cpp" line="57"/>
+        <source>&lt;b&gt;Build number:&lt;/b&gt; %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/aboutdialog.cpp" line="65"/>
+        <source>&lt;b&gt;Build date:&lt;/b&gt; %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/gui/aboutdialog.cpp" line="96"/>
         <source>Can&apos;t open file: %1</source>
         <translation>Невозможно открыть файл: %1</translation>
     </message>
@@ -402,76 +422,81 @@
         <translation>Время окончания</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="142"/>
-        <location filename="../src/gui/taskeditdialog.ui" line="149"/>
-        <location filename="../src/gui/taskeditdialog.ui" line="169"/>
-        <location filename="../src/gui/taskeditdialog.ui" line="176"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="137"/>
+        <source>Length</source>
+        <translation>Длина</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/taskeditdialog.ui" line="147"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="154"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="174"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="181"/>
         <source>...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="199"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="204"/>
         <source>&amp;Add...</source>
         <translation>&amp;Добавить...</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="202"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="207"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="207"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="212"/>
         <source>&amp;Remove...</source>
         <translation>&amp;Удалить...</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="210"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="215"/>
         <source>Remove</source>
         <translation>Удалить</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="215"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="220"/>
         <source>&amp;Edit...</source>
         <translation>&amp;Изменить...</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="218"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="223"/>
         <source>Edit</source>
         <translation>Изменить</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="223"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="228"/>
         <source>Remove &amp;all...</source>
         <translation>Удалить &amp;все...</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.ui" line="226"/>
+        <location filename="../src/gui/taskeditdialog.ui" line="231"/>
         <source>Remove all</source>
         <translation>Удалить все</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.cpp" line="97"/>
+        <location filename="../src/gui/taskeditdialog.cpp" line="99"/>
         <source>New time interval</source>
         <translation>Новый интервал времени</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.cpp" line="115"/>
-        <location filename="../src/gui/taskeditdialog.cpp" line="128"/>
+        <location filename="../src/gui/taskeditdialog.cpp" line="120"/>
+        <location filename="../src/gui/taskeditdialog.cpp" line="133"/>
         <source>Question</source>
         <translation>Вопрос</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.cpp" line="116"/>
+        <location filename="../src/gui/taskeditdialog.cpp" line="121"/>
         <source>Are you sure you want to delete selected time intervals?</source>
         <translation>Вы уверены, что хотите удалить все выделенные интервалы времени?</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.cpp" line="129"/>
+        <location filename="../src/gui/taskeditdialog.cpp" line="134"/>
         <source>Are you sure you want to delete all time intervals?</source>
         <translation>Вы уверены, что хотите удалить все интервалы времени?</translation>
     </message>
     <message>
-        <location filename="../src/gui/taskeditdialog.cpp" line="151"/>
+        <location filename="../src/gui/taskeditdialog.cpp" line="155"/>
         <source>Edit time interval</source>
         <translation>Изменить интервал времени</translation>
     </message>

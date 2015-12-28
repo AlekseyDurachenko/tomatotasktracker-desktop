@@ -16,6 +16,7 @@
 #include "ui_taskeditdialog.h"
 #include "consts.h"
 #include "theme.h"
+#include "timestr.h"
 #include "tasktimeeditdialog.h"
 #include <QMessageBox>
 #include <QMenu>
@@ -87,6 +88,7 @@ void TaskEditDialog::setData(const TaskData &taskData)
         QTreeWidgetItem *item = new QTreeWidgetItem;
         item->setText(0, QDateTime::fromTime_t(taskTime.start()).toString(DisplayTaskTimeFormat));
         item->setText(1, QDateTime::fromTime_t(taskTime.end()).toString(DisplayTaskTimeFormat));
+        item->setText(2, secsToTimeStr(taskTime.end() - taskTime.start(), true));
         ui->taskTime_treeWidget->addTopLevelItem(item);
     }
 }
@@ -99,6 +101,9 @@ void TaskEditDialog::on_add_action_triggered()
         QTreeWidgetItem *item = new QTreeWidgetItem;
         item->setText(0, dialog.startDateTime().toString(DisplayTaskTimeFormat));
         item->setText(1, dialog.endDateTime().toString(DisplayTaskTimeFormat));
+        item->setText(2, secsToTimeStr(dialog.endDateTime().toTime_t()
+                                       - dialog.startDateTime().toTime_t(),
+                                       true));
         ui->taskTime_treeWidget->addTopLevelItem(item);
     }
 }
@@ -134,8 +139,7 @@ void TaskEditDialog::on_removeAll_action_triggered()
     ui->taskTime_treeWidget->clear();
 }
 
-void TaskEditDialog::on_taskTime_treeWidget_customContextMenuRequested(
-    const QPoint &pos)
+void TaskEditDialog::on_taskTime_treeWidget_customContextMenuRequested(const QPoint &pos)
 {
     QMenu menu(this);
     menu.addAction(ui->add_action);
@@ -154,6 +158,9 @@ void TaskEditDialog::openEditTaskTimeDialog(QTreeWidgetItem *item)
     if (dialog.exec() == QDialog::Accepted) {
         item->setText(0, dialog.startDateTime().toString(DisplayTaskTimeFormat));
         item->setText(1, dialog.endDateTime().toString(DisplayTaskTimeFormat));
+        item->setText(2, secsToTimeStr(dialog.endDateTime().toTime_t()
+                                       - dialog.startDateTime().toTime_t(),
+                                       true));
     }
 }
 

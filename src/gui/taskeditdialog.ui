@@ -132,6 +132,11 @@
            <string>End time</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Length</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>
