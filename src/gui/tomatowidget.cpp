@@ -88,10 +88,10 @@ void TomatoWidget::updateAll()
         m_statusFrame->setStyleSheet("");
         break;
     case Tomato::Working:
-        m_statusFrame->setStyleSheet("background-color: yellow;");
+        m_statusFrame->setStyleSheet("background-color: red;");
         break;
     case Tomato::OverWorking:
-        m_statusFrame->setStyleSheet("background-color: red;");
+        m_statusFrame->setStyleSheet("background-color: yellow;");
         break;
     case Tomato::Resting:
         m_statusFrame->setStyleSheet("background-color: lightGreen;");
