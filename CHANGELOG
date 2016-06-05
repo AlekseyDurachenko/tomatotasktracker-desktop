@@ -1,19 +1,13 @@
-ChangeLog
-=========
+# ChangeLog
+## v0.2.0
+- full code refactoring
 
-v0.1.3
-------
-* change status colors
-* add total time column for task intervals in taskedit dialog
+## v0.1.3
+- change status colors
+- add total time column for task intervals in taskedit dialog
 
-v0.1.2
-------
-* fix minor bugs
+## v0.1.2
+- fix minor bugs
 
-v0.1.1
-------
-* first public release
-
-v0.1.0
-------
-* init version
+## v0.1.1
+- first public release

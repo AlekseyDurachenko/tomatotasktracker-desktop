@@ -40,6 +40,24 @@
 #endif
 
 
+const char *appOrgName()
+{
+#ifdef APP_ORG_NAME
+    return STR(APP_ORG_NAME);
+#else
+    return "";
+#endif
+}
+
+const char *appOrgDomain()
+{
+#ifdef APP_ORG_DOMAIN
+    return STR(APP_ORG_DOMAIN);
+#else
+    return "";
+#endif
+}
+
 const char *appName()
 {
     return STR(APP_NAME);

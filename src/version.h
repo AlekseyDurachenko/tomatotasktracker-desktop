@@ -16,7 +16,10 @@
 #define VERSION_H
 
 
+const char *appOrgName();
+const char *appOrgDomain();
 const char *appName();
+
 const char *appShortName();
 const char *appFullName();
 

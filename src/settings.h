@@ -1,4 +1,4 @@
-// Copyright 2015, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
+// Copyright 2016, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,42 +16,10 @@
 #define SETTINGS_H
 
 
-#include "version.h"
-#include <QCoreApplication>
-#include <QDir>
+#include <QSettings>
 
 
-#ifdef APP_PORTABLE
-    #define G_SETTINGS_INIT()                                               \
-            QSettings settings(QCoreApplication::applicationDirPath()       \
-                               + QDir::separator()                          \
-                               + "settings.ini", QSettings::IniFormat);
-#else
-    #define G_SETTINGS_INIT()                                               \
-            QSettings settings(QSettings::IniFormat, QSettings::UserScope,  \
-                    appName(), appName());
-#endif
-
-
-const char SettingsLastPath[] = "LastPath";
-const char SettingsLastProject[] = "LastProjectFileName";
-
-const char SettingsMainWindowGeometry[] = "MainWindow/geometry";
-const char SettingsMainWindowState[] = "MainWindow/state";
-const char SettingsTaskViewHeaderState[] = "TaskView/header/state";
-const char SettingsTaskViewHideCompleted[] = "TaskView/hideCompleted";
-
-const char SettingsSaveChangesOnExit[] = "SaveChangesOnExit";
-const char SettingsSaveChangesPeriodically[] = "SaveChangesPeriodically";
-const char SettingsSaveChangesInterval[] = "SaveChangesInterval";
-
-const char SettingsShowWorkingFinishTrayNotify[] = "ShowWorkingFinishTrayNotify";
-const char SettingsShowRestingFinishTrayNotify[] = "ShowRestingFinishTrayNotify";
-
-const char SettingsWorkingFinishedSoundFile[] = "WorkingFinishedSoundFile";
-const char SettingsRestingFinishedSoundFile[] = "RestingFinishedSoundFile";
-const char SettingsPlayWorkingFinishedSound[] = "WorkingPlayFinishedSound";
-const char SettingsPlayRestingFinishedSound[] = "RestingPlayFinishedSound";
+QSettings &appSettings();
 
 
 #endif // SETTINGS_H

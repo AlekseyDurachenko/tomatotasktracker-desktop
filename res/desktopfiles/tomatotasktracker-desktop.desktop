@@ -1,12 +1,12 @@
 [Desktop Entry]
 Name=Tomato Task Tracker
-Name[ru]=Помидорный трекер задач
+Name[ru]=Менеджер задач-помидоров
 
 GenericName=Tomato Task Tracker
-GenericName[ru]=Помидорный трекер задач
+GenericName[ru]=Менеджер задач-помидоров
 
-Comment=Your simple task tracker with added Pomodoro technique
-Comment[ru]=Ваш простой трекер задач дополненный методом "Помидор"
+Comment=The personal task tracker with the Pomodoro Technique
+Comment[ru]=Персональный менеджер задач скрещенный с методом "Помидор"
 
 Exec=tomatotasktracker-desktop %f
 Icon=tomatotasktracker-desktop

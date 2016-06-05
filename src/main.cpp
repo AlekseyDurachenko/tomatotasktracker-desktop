@@ -1,4 +1,4 @@
-// Copyright 2015, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
+// Copyright 2015-2016, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,40 +12,38 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#include "theme.h"
-#include "version.h"
-#include "resources.h"
 #include "mainwindow.h"
+#include "resources.h"
+#include "theme.h"
 #include <QApplication>
-#include <QTranslator>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QTranslator>
+
+
+void installTranslators(QCoreApplication *app)
+{
+    // Qt translator
+    static QTranslator qtTr;
+    qtTr.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    app->installTranslator(&qtTr);
+
+    // application translator
+    static QTranslator myTr;
+    myTr.load(QLocale::system().name(), langsPath());
+    app->installTranslator(&myTr);
+}
 
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-
-    // Qt translator
-    QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(),
-                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qtTranslator);
-    // application translator
-    QTranslator myappTranslator;
-    myappTranslator.load(appName() + QString("_") + QLocale::system().name(),
-                         languagesPath());
-    app.installTranslator(&myappTranslator);
-
-
+    installTranslators(&app);
     theme::init();
 
+    MainWindow mainWindow;
+    mainWindow.show();
 
-    MainWindow window;
-    window.show();
-    int ret = app.exec();
-
-
-    return ret;
+    return app.exec();
 }

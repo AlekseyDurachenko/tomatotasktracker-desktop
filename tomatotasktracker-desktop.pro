@@ -1,4 +1,4 @@
-# Copyright 2015, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
+# Copyright 2015-2016, Durachenko Aleksey V. <durachenko.aleksey@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,8 +15,8 @@
 TEMPLATE        = app
 TARGET          = tomatotasktracker-desktop
 APP_MAJOR       = 0
-APP_MINOR       = 1
-APP_PATCH       = 3
+APP_MINOR       = 2
+APP_PATCH       = 0
 VERSION         = "$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}"
 CONFIG          += console debug_and_release
 QT              += core gui xml
@@ -62,9 +62,13 @@ DEFINES += "APP_PATCH=$${APP_PATCH}"
 # qmake "DEFINES += APP_SOURCES='https://github.com/path/to/project'"
 # if you want specify application version you can use:
 # qmake "DEFINES += APP_VERSION='0.1.0-5-g27626de'"
-C = $$find(DEFINES, "APP_VERSION=")
-isEmpty(C) {
+V = $$find(DEFINES, "APP_VERSION=")
+isEmpty(V) {
+    VERSION  = "$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}"
     DEFINES += "APP_VERSION='$${APP_MAJOR}.$${APP_MINOR}.$${APP_PATCH}'"
+}
+else {
+    VERSION  = $$replace(V, "APP_VERSION=", "")
 }
 
 
@@ -102,6 +106,8 @@ include($$PWD/tomatotasktracker-desktop-sources.pri)
 include($$PWD/tomatotasktracker-desktop-tests.pri)
 include($$PWD/tomatotasktracker-desktop-unixinstall.pri)
 include($$PWD/tomatotasktracker-desktop-unixrules.pri)
+include($$PWD/tomatotasktracker-desktop-win32install.pri)
+include($$PWD/tomatotasktracker-desktop-win32rules.pri)
 
 
 # the 3rd libraries (.pri)
