@@ -88,3 +88,7 @@ OTHER_FILES    +=                                                   \
         $$PWD/src/main.cpp                                          \
 
 }
+
+win32 {
+    RC_FILE     += res/windows/rc.rc
+}
