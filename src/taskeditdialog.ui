@@ -233,19 +233,20 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>title_lineEdit</tabstop>
   <tabstop>useTimeLimit_checkBox</tabstop>
   <tabstop>hour_spinBox</tabstop>
+  <tabstop>desc_plainTextEdit</tabstop>
   <tabstop>min_spinBox</tabstop>
   <tabstop>sec_spinBox</tabstop>
-  <tabstop>desc_plainTextEdit</tabstop>
   <tabstop>completed_checkBox</tabstop>
   <tabstop>taskTime_treeWidget</tabstop>
   <tabstop>add_toolButton</tabstop>
   <tabstop>edit_toolButton</tabstop>
   <tabstop>remove_toolButton</tabstop>
   <tabstop>removeAll_toolButton</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>tabWidget</tabstop>
  </tabstops>
  <resources/>
  <connections>
